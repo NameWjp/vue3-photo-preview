@@ -16,6 +16,10 @@
     "photo-preview",
     "vue3-photo-preview"
   ],
+  "engines": {
+    "node": ">=14",
+    "npm": ">=6"
+  },
   "scripts": {
     "build": "npm run clean && tsc --module commonjs && rollup -c rollup.config.ts",
     "clean": "rimraf ./dist"
