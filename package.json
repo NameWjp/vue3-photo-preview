@@ -1,0 +1,62 @@
+{
+  "name": "vue3-photo-preview",
+  "version": "0.0.1",
+  "description": "一个 vue3 的图片预览组件",
+  "main": "dist/vue3-photo-preview.umd.js",
+  "module": "dist/vue3-photo-preview.esm.js",
+  "esnext": "dist/vue3-photo-preview.esm.js",
+  "types": "dist/index.d.ts",
+  "author": "wangjp",
+  "license": "MIT",
+  "repository": "https://github.com/NameWjp/vue3-photo-preview.git",
+  "homepage": "https://github.com/NameWjp/vue3-photo-preview#readme",
+  "bugs": "https://github.com/NameWjp/vue3-photo-preview/issues",
+  "keywords": [
+    "vue3",
+    "photo-preview",
+    "vue3-photo-preview"
+  ],
+  "scripts": {
+    "build": "npm run clean && tsc --module commonjs && rollup -c rollup.config.ts",
+    "clean": "rimraf ./dist"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "node scripts/verify-commit.js"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx,vue}": "eslint"
+  },
+  "peerDependencies": {
+    "vue": "3.2.x"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^20.0.0",
+    "@rollup/plugin-node-resolve": "^13.0.4",
+    "@rollup/plugin-typescript": "^8.2.5",
+    "@typescript-eslint/eslint-plugin": "^4.29.2",
+    "@typescript-eslint/parser": "^4.29.2",
+    "@vue/compiler-sfc": "^3.2.4",
+    "autoprefixer": "^10.3.1",
+    "chalk": "^4.1.2",
+    "eslint": "^7.32.0",
+    "eslint-plugin-vue": "^7.16.0",
+    "husky": "4.2.3",
+    "lint-staged": "^11.1.2",
+    "postcss": "^8.3.6",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.56.2",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-postcss": "^4.0.1",
+    "rollup-plugin-vue": "^6.0.0-beta.10",
+    "sass": "^1.38.0",
+    "tslib": "^2.3.1",
+    "typescript": "^4.3.5"
+  },
+  "dependencies": {
+    "lodash-es": "^4.17.21",
+    "vue": "^3.2.4"
+  }
+}
