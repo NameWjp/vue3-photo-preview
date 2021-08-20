@@ -35,7 +35,9 @@ export default {
       extract: 'index.css',
       plugins: [autoprefixer()]
     }),
-    typescript(),
+    typescript({
+      useTsconfigDeclarationDir: true
+    }),
     commonjs(),
     nodeResolve({
       extensions: ['.vue', '.ts']

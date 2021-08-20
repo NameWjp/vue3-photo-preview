@@ -5,7 +5,7 @@
   "main": "dist/vue3-photo-preview.umd.js",
   "module": "dist/vue3-photo-preview.esm.js",
   "esnext": "dist/vue3-photo-preview.esm.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/types/index.d.ts",
   "author": "wangjp",
   "license": "MIT",
   "repository": "https://github.com/NameWjp/vue3-photo-preview.git",
