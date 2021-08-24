@@ -18,10 +18,11 @@
   ],
   "engines": {
     "node": ">=14",
-    "npm": ">=6"
+    "npm": ">=7"
   },
   "scripts": {
     "build": "npm run clean && tsc --module commonjs && rollup -c rollup.config.ts",
+    "dev": "rollup -c rollup.config.ts -w",
     "clean": "rimraf ./dist"
   },
   "husky": {

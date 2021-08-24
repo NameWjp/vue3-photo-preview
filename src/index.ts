@@ -1,8 +1,10 @@
 import { App } from 'vue';
-import TText from './TText.vue';
+import PhotoProvider from './PhotoProvider.vue';
+import PhotoConsumer from './PhotoConsumer.vue';
 
 const components = [
-  TText
+  PhotoProvider,
+  PhotoConsumer
 ];
 
 const install = (app: App): void  => {
@@ -11,6 +13,6 @@ const install = (app: App): void  => {
   });
 };
 
-export { TText };
+export { PhotoProvider, PhotoConsumer };
 
 export default { install };
