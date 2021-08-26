@@ -13,6 +13,6 @@ module.exports = {
     node: true,
   },
   rules: {
-    semi: 2
+    'semi': 2
   }
 };

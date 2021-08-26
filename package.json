@@ -28,7 +28,7 @@
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
-      "commit-msg": "node scripts/verify-commit.js"
+      "commit-msg": "FORCE_COLOR=1 node scripts/verify-commit.js"
     }
   },
   "lint-staged": {
@@ -40,6 +40,7 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^20.0.0",
     "@rollup/plugin-node-resolve": "^13.0.4",
+    "@types/lodash-es": "^4.17.4",
     "@typescript-eslint/eslint-plugin": "^4.29.2",
     "@typescript-eslint/parser": "^4.29.2",
     "@vue/compiler-sfc": "^3.2.4",
@@ -62,6 +63,6 @@
   },
   "dependencies": {
     "lodash-es": "^4.17.21",
-    "vue": "^3.2.4"
+    "vue": "3.2.x"
   }
 }

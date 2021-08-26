@@ -19,7 +19,6 @@ export default {
       sourcemap: true,
       globals: {
         'vue': 'Vue',
-        'lodash-es': '_'
       },
     },
     {
@@ -39,9 +38,7 @@ export default {
       useTsconfigDeclarationDir: true
     }),
     commonjs(),
-    nodeResolve({
-      extensions: ['.vue', '.ts']
-    }),
+    nodeResolve(),
     external()
   ]
 };

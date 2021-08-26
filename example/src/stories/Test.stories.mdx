@@ -1,0 +1,24 @@
+import { Meta, Story, Canvas } from '@storybook/addon-docs';
+import { PhotoProvider, PhotoConsumer } from 'vue3-photo-preview';
+import 'vue3-photo-preview/dist/index.css';
+import pic1 from './images/1.jpg';
+
+<Meta title="vue3-photo-preview" />
+
+## 默认展示
+<Canvas>
+  <Story name="默认展示">
+    {
+      () => ({
+        components: { PhotoProvider, PhotoConsumer },
+        template: `
+          <photo-provider>
+            <PhotoConsumer src="${pic1}">
+              <button>点击打开</button>
+            </PhotoConsumer>
+          </photo-provider>
+        `
+      })
+    }
+  </Story>
+</Canvas>

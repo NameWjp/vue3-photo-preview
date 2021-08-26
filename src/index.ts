@@ -1,6 +1,6 @@
 import { App } from 'vue';
-import PhotoProvider from './PhotoProvider.vue';
-import PhotoConsumer from './PhotoConsumer.vue';
+import PhotoProvider from './PhotoProvider/index.vue';
+import PhotoConsumer from './PhotoConsumer/index.vue';
 
 const components = [
   PhotoProvider,
