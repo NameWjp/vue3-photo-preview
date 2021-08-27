@@ -25,17 +25,23 @@ import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'PhotoSlider',
   props: {
-    // 图片列表
+    /**
+     * 图片列表
+     */
     items: {
       type: Array,
       required: true,
     },
-    // 是否可见
+    /**
+     * 是否可见
+     */
     visible: {
       type: Boolean,
       required: true,
     },
-    // 图片当前索引
+    /**
+     * 图片当前索引
+     */
     index: {
       type: Number,
       required: true,

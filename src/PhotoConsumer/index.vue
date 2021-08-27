@@ -4,6 +4,7 @@
     ref="root"
     @click="handleClick"
   >
+    <!-- @slot 默认插槽 -->
     <slot />
   </span>
 </template>
@@ -16,12 +17,16 @@ import uniqueId from 'lodash-es/uniqueId';
 export default defineComponent({
   name: 'PhotoConsumer',
   props: {
-    // 图片地址
+    /**
+     * 图片地址
+     */
     src: {
       type: String,
       required: true,
     },
-    // 图片介绍
+    /**
+     * 图片介绍
+     */
     intro: {
       type: String,
       default: ''

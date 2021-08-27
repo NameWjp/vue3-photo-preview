@@ -1,4 +1,5 @@
 <template>
+  <!-- @slot 默认插槽 -->
   <slot />
   <photo-slider
     :index="index"
@@ -22,12 +23,16 @@ export default defineComponent({
     PhotoSlider
   },
   props: {
-    // 图片点击是否关闭
+    /**
+     * 图片点击是否关闭
+     */
     photoClosable: {
       type: Boolean,
       default: false,
     },
-    // 背景点击是否关闭
+    /**
+     * 背景点击是否关闭
+     */
     maskClosable: {
       type: Boolean,
       default: true,

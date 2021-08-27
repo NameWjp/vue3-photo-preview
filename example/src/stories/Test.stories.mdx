@@ -1,7 +1,9 @@
-import { Meta, Story, Canvas } from '@storybook/addon-docs';
+import { Meta, Story, Canvas, ArgsTable } from '@storybook/addon-docs';
 import { PhotoProvider, PhotoConsumer } from 'vue3-photo-preview';
+import { ViewBox, imgList } from '../main.ts';
+import originPhotoProvider from 'vue3-photo-preview/src/PhotoProvider/index.vue';
+import originPhotoConsumer from 'vue3-photo-preview/src/PhotoConsumer/index.vue'
 import 'vue3-photo-preview/dist/index.css';
-import pic1 from './images/1.jpg';
 
 <Meta title="vue3-photo-preview" />
 
@@ -10,11 +12,16 @@ import pic1 from './images/1.jpg';
   <Story name="默认展示">
     {
       () => ({
-        components: { PhotoProvider, PhotoConsumer },
+        setup() {
+          return {
+            imgList
+          }
+        },
+        components: { PhotoProvider, PhotoConsumer, ViewBox },
         template: `
           <photo-provider>
-            <PhotoConsumer src="${pic1}">
-              <button>点击打开</button>
+            <PhotoConsumer v-for="src in imgList" :key="src" :src="src">
+              <ViewBox :src="src" />
             </PhotoConsumer>
           </photo-provider>
         `
@@ -22,3 +29,13 @@ import pic1 from './images/1.jpg';
     }
   </Story>
 </Canvas>
+
+## Props
+
+### PhotoProvider
+
+<ArgsTable of={originPhotoProvider} />
+
+### PhotoConsumer
+
+<ArgsTable of={originPhotoConsumer} />
