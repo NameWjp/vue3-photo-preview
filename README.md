@@ -25,7 +25,7 @@ npm ci
 npm run dev
 ```
 
-此时，修改`根目录`或者`example目录`的任何代码都会导致项目重新打包构建。 
+此时，修改 **根目录** 或者 **example目录** 的任何代码都会导致项目重新打包构建。 
 
 
 参考：[https://github.com/MinJieLiu/react-photo-view](https://github.com/MinJieLiu/react-photo-view)
