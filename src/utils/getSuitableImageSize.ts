@@ -12,12 +12,19 @@ export default function getSuitableImageSize(
   const scaleWidth = innerWidth / naturalWidth;
   const scaleHeight = innerHeight / naturalHeight;
 
-  if (scaleWidth < scaleHeight) {
-    width = innerWidth;
-    height = innerWidth * (naturalHeight / naturalWidth);
+  if (naturalWidth < innerWidth && naturalHeight < innerHeight) {
+    // 如果图片原始宽度未超过容器尺寸，则使用原始尺寸
+    width = naturalWidth;
+    height = naturalHeight;
   } else {
-    width = innerHeight * (naturalWidth / naturalHeight);
-    height = innerHeight;
+    // 否则缩放图片使之恰好放入
+    if (scaleWidth < scaleHeight) {
+      width = innerWidth;
+      height = innerWidth * (naturalHeight / naturalWidth);
+    } else {
+      width = innerHeight * (naturalWidth / naturalHeight);
+      height = innerHeight;
+    }
   }
 
   return {
