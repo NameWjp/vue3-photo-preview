@@ -2,8 +2,8 @@
   <!-- @slot 默认插槽 -->
   <slot />
   <photo-slider
+    v-if="visible"
     :index="index"
-    :visible="visible"
     :items="items"
     @clickPhoto="handleClickPhoto"
     @clickMask="handleClickMask"
@@ -39,7 +39,7 @@ export default defineComponent({
     }
   },
   setup() {
-    const index = ref<number>(0);
+    const index = ref(0);
     const { items, updateItem, removeItem } = useItems(index);
     const { visible, handleHide, handleShow } = useVisible(items, index);
 

@@ -8,7 +8,7 @@ type useVisibleReturn = {
 }
 
 export default function useVisible(items: Ref<itemType[]>, index: Ref<number>): useVisibleReturn {
-  const visible = ref<boolean>(false);
+  const visible = ref(false);
 
   const handleHide = () => {
     visible.value = false;
