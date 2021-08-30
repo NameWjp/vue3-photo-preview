@@ -38,7 +38,7 @@ export default defineComponent({
       default: true,
     }
   },
-  setup() {
+  setup(props) {
     const index = ref(0);
     const { items, updateItem, removeItem } = useItems(index);
     const { visible, handleHide, handleShow } = useVisible(items, index);
@@ -48,6 +48,17 @@ export default defineComponent({
     provide(removeItemKey, removeItem);
     provide(handleShowKey, handleShow);
 
+    const handleClickPhoto = () => {
+      if (props.photoClosable) {
+        handleHide();
+      }
+    };
+    const handleClickMask = () => {
+      if (props.maskClosable) {
+        handleHide();
+      }
+    };
+
     return {
       items,
       updateItem,
@@ -56,20 +67,10 @@ export default defineComponent({
       handleHide,
       handleShow,
       index,
+      handleClickPhoto,
+      handleClickMask,
     };
   },
-  methods: {
-    handleClickPhoto() {
-      if (this.photoClosable) {
-        this.handleHide();
-      }
-    },
-    handleClickMask() {
-      if (this.maskClosable) {
-        this.handleHide();
-      }
-    }
-  }
 });
 </script>
 
