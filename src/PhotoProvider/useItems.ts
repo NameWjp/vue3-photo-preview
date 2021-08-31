@@ -1,16 +1,16 @@
 import { ref, Ref } from 'vue';
-import { itemType, updateItemType, removeItemType } from '../types';
+import { ItemType, UpdateItemType, RemoveItemType } from '../types';
 
 type useItemsReturn = {
-  items: Ref<itemType[]>,
-  updateItem: updateItemType,
-  removeItem: removeItemType
+  items: Ref<ItemType[]>,
+  updateItem: UpdateItemType,
+  removeItem: RemoveItemType
 }
 
 export default function useItems(index: Ref<number>): useItemsReturn {
-  const items = ref<itemType[]>([]);
+  const items = ref<ItemType[]>([]);
 
-  const updateItem = (item: itemType) => {
+  const updateItem = (item: ItemType) => {
     const index = items.value.findIndex(({ key }) => item.key === key);
     if (index > -1) {
       items.value.splice(index, 1, item);

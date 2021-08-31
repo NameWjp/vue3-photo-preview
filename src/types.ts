@@ -1,4 +1,4 @@
-export type itemType = {
+export type ItemType = {
   // 唯一标识
   key: string,
   // 图片地址
@@ -9,8 +9,15 @@ export type itemType = {
   intro?: string | null
 }
 
-export type updateItemType = (item: itemType) => void;
+export type UpdateItemType = (item: ItemType) => void;
 
-export type removeItemType = (key: string) => void;
+export type RemoveItemType = (key: string) => void;
 
-export type handleShowType = (key: string) => void;
+export type HandleShowType = (key: string) => void;
+
+// 动画类型
+export enum ShowAnimateEnum {
+  None,
+  In,
+  Out,
+}

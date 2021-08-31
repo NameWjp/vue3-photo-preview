@@ -2,7 +2,7 @@
   <!-- @slot 默认插槽 -->
   <slot />
   <photo-slider
-    v-if="visible"
+    :visible="visible"
     :index="index"
     :items="items"
     @clickPhoto="handleClickPhoto"

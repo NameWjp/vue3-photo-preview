@@ -1,6 +1,7 @@
 <template>
   <teleport to="body">
     <div
+      v-if="visible"
       class="PhotoSlider__Wrapper"
     >
       <div class="PhotoSlider__Backdrop" />
@@ -67,6 +68,13 @@ export default defineComponent({
      */
     index: {
       type: Number,
+      required: true,
+    },
+    /**
+     * 是否显示
+     */
+    visible: {
+      type: Boolean,
       required: true,
     }
   },

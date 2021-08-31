@@ -1,13 +1,13 @@
 import { ref, Ref } from 'vue';
-import { handleShowType, itemType } from '../types';
+import { HandleShowType, ItemType } from '../types';
 
 type useVisibleReturn = {
   visible: Ref<boolean>,
   handleHide: () => void,
-  handleShow: handleShowType
+  handleShow: HandleShowType
 }
 
-export default function useVisible(items: Ref<itemType[]>, index: Ref<number>): useVisibleReturn {
+export default function useVisible(items: Ref<ItemType[]>, index: Ref<number>): useVisibleReturn {
   const visible = ref(false);
 
   const handleHide = () => {
