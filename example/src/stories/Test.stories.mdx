@@ -20,7 +20,7 @@ import 'vue3-photo-preview/dist/index.css';
         components: { PhotoProvider, PhotoConsumer, ViewBox },
         template: `
           <photo-provider>
-            <PhotoConsumer v-for="src in imgList" :key="src" :src="src">
+            <PhotoConsumer v-for="src in imgList" :intro="src" :key="src" :src="src">
               <ViewBox :src="src" />
             </PhotoConsumer>
           </photo-provider>

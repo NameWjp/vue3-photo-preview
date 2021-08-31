@@ -6,7 +6,7 @@ export type itemType = {
   // 控住图片显示的节点
   originRef?: HTMLElement | null,
   // 图片介绍
-  intro?: string
+  intro?: string | null
 }
 
 export type updateItemType = (item: itemType) => void;

@@ -7,6 +7,7 @@
     :items="items"
     @clickPhoto="handleClickPhoto"
     @clickMask="handleClickMask"
+    @clickClose="handleHide"
   />
 </template>
 

@@ -29,7 +29,7 @@ export default defineComponent({
      */
     intro: {
       type: String,
-      default: ''
+      default: null
     }
   },
   setup(props) {
@@ -49,7 +49,8 @@ export default defineComponent({
         updateItem({
           key,
           src: props.src,
-          originRef: root.value
+          originRef: root.value,
+          intro: props.intro
         });
       }
     });
