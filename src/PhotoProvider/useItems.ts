@@ -2,9 +2,9 @@ import { ref, Ref } from 'vue';
 import { ItemType, UpdateItemType, RemoveItemType } from '../types';
 
 type useItemsReturn = {
-  items: Ref<ItemType[]>,
-  updateItem: UpdateItemType,
-  removeItem: RemoveItemType
+  items: Ref<ItemType[]>;
+  updateItem: UpdateItemType;
+  removeItem: RemoveItemType;
 }
 
 export default function useItems(index: Ref<number>): useItemsReturn {

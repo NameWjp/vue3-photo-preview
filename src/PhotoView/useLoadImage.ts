@@ -2,11 +2,11 @@ import { ref, Ref } from 'vue';
 import getSuitableImageSize from '../utils/getSuitableImageSize';
 
 export default function useLoadImage(src: string): {
-  width: Ref<number>,
-  height: Ref<number>,
-  loaded: Ref<boolean>,
-  naturalWidth: Ref<number>,
-  naturalHeight: Ref<number>
+  width: Ref<number>;
+  height: Ref<number>;
+  loaded: Ref<boolean>;
+  naturalWidth: Ref<number>;
+  naturalHeight: Ref<number>;
 } {
   const naturalWidth = ref(0);
   const naturalHeight = ref(0);

@@ -1,10 +1,20 @@
 <template>
   <teleport to="body">
     <div
-      v-if="visible"
+      v-if="photoVisible"
       class="PhotoSlider__Wrapper"
+      :class="{
+        'PhotoSlider__Clean': !(showAnimateType === ShowAnimateEnum.None)
+      }"
     >
-      <div class="PhotoSlider__Backdrop" />
+      <div
+        class="PhotoSlider__Backdrop"
+        :class="{
+          'PhotoSlider__fadeIn': showAnimateType === ShowAnimateEnum.In,
+          'PhotoSlider__fadeOut': showAnimateType === ShowAnimateEnum.Out
+        }"
+        @animationend="onShowAnimateEnd"
+      />
       <div class="PhotoSlider__BannerWrap">
         <div class="PhotoSlider__Counter">
           {{ index + 1 }} / {{ items.length }}
@@ -27,27 +37,31 @@
         @click="handleClickMask"
       >
         <photo-view
+          :origin-rect="originRect"
+          :show-animate-type="showAnimateType"
           :src="item.src"
           @click.stop="handleClickPhoto"
         />
       </div>
       <div
-        v-if="items[index].intro"
+        v-if="currentItem.intro"
         class="PhotoSlider__FooterWrap"
       >
-        {{ items[index].intro }}
+        {{ currentItem.intro }}
       </div>
     </div>
   </teleport>
 </template>
 
 <script lang='ts'>
-import { defineComponent } from 'vue';
+import { defineComponent, computed, toRefs, PropType } from 'vue';
 import PhotoView from '../PhotoView/index.vue';
 import { horizontalOffset } from '../constant';
 import useBodyEffect from './useBodyEffect';
 import useInnerWidth from './useInnerWidth';
 import Close from './Close.vue';
+import useAnimationHandle from './useAnimationHandle';
+import { ItemType, ShowAnimateEnum } from '../types';
 
 export default defineComponent({
   name: 'PhotoSlider',
@@ -60,7 +74,7 @@ export default defineComponent({
      * 图片列表
      */
     items: {
-      type: Array,
+      type: Array as PropType<ItemType[]>,
       required: true,
     },
     /**
@@ -79,32 +93,64 @@ export default defineComponent({
     }
   },
   emits: ['clickPhoto', 'clickMask', 'clickClose'],
-  setup(_props, { emit }) {
-    useBodyEffect();
+  setup(props) {
+    const { items, index, visible } = toRefs(props);
+    const currentItem = computed<ItemType>(() => {
+      return items.value[index.value] || {};
+    });
+
+    useBodyEffect(visible);
+    const {
+      photoVisible, showAnimateType, originRect, onShowAnimateEnd
+    } = useAnimationHandle(visible, currentItem);
     const { innerWidth } = useInnerWidth();
 
-    const handleClickPhoto = () => {
-      emit('clickPhoto');
-    };
-    const handleClickMask = () => {
-      emit('clickMask');
-    };
-    const handleClickClose = () => {
-      emit('clickClose');
-    };
-
     return {
-      handleClickPhoto,
-      handleClickMask,
-      handleClickClose,
-      horizontalOffset,
-      innerWidth
+      innerWidth,
+      currentItem,
+      photoVisible,
+      showAnimateType,
+      originRect,
+      onShowAnimateEnd,
     };
   },
+  data() {
+    return {
+      horizontalOffset,
+      ShowAnimateEnum,
+    };
+  },
+  methods: {
+    handleClickPhoto() {
+      this.$emit('clickPhoto');
+    },
+    handleClickMask() {
+      this.$emit('clickMask');
+    },
+    handleClickClose() {
+      this.$emit('clickClose');
+    }
+  }
 });
 </script>
 
 <style lang="scss">
+@keyframes PhotoView__fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.PhotoSlider__Wrapper.PhotoSlider__Clean {
+  .PhotoSlider__BannerWrap,
+  .PhotoSlider__FooterWrap {
+    opacity: 0;
+  }
+}
+
 .PhotoSlider__Wrapper {
   position: fixed;
   left: 0;
@@ -121,8 +167,17 @@ export default defineComponent({
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0);
+    background: rgba(0, 0, 0, 1);
     z-index: -1;
+
+    &.PhotoSlider__fadeIn {
+      opacity: 0;
+      animation: PhotoView__fade 0.4s linear both;
+    }
+    &.PhotoSlider__fadeOut {
+      opacity: 1;
+      animation: PhotoView__fade 0.4s linear both reverse;
+    }
   }
 
   .PhotoSlider__BannerWrap {
@@ -170,11 +225,11 @@ export default defineComponent({
     position: absolute;
     top: 0;
     left: 0;
+    width: 100%;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
-    height: 100%;
     z-index: 10;
     overflow: hidden;
   }
