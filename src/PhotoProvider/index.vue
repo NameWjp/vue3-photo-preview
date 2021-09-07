@@ -7,15 +7,17 @@
     :items="items"
     @clickPhoto="handleClickPhoto"
     @clickMask="handleClickMask"
-    @clickClose="handleHide"
+    @changeIndex="updateIndex"
+    @closeModal="handleHide"
   />
 </template>
 
 <script lang='ts'>
-import { defineComponent, provide, ref } from 'vue';
+import { defineComponent, provide } from 'vue';
 import { updateItemKey, removeItemKey, handleShowKey } from '../symbols';
 import useItems from './useItems';
 import useVisible from './useVisible';
+import useIndex from './useIndex';
 import PhotoSlider from '../PhotoSlider/index.vue';
 
 export default defineComponent({
@@ -40,7 +42,7 @@ export default defineComponent({
     }
   },
   setup() {
-    const index = ref(0);
+    const { index, updateIndex } = useIndex();
     const { items, updateItem, removeItem } = useItems(index);
     const { visible, handleHide, handleShow } = useVisible(items, index);
 
@@ -56,6 +58,7 @@ export default defineComponent({
       handleHide,
       handleShow,
       index,
+      updateIndex,
     };
   },
   methods: {

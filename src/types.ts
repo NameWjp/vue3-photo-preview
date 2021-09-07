@@ -28,3 +28,10 @@ export enum ShowAnimateEnum {
   In,
   Out,
 }
+
+// 触摸状态
+export enum TouchTypeEnum {
+  Normal,
+  X, // x 轴只能水平切换图片
+  Y, // y 轴只能撤销图片
+}

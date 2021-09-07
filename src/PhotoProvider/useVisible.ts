@@ -25,6 +25,6 @@ export default function useVisible(items: Ref<ItemType[]>, index: Ref<number>): 
   return {
     visible,
     handleHide,
-    handleShow
+    handleShow,
   };
 }

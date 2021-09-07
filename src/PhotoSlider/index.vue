@@ -13,6 +13,9 @@
           'PhotoSlider__fadeIn': showAnimateType === ShowAnimateEnum.In,
           'PhotoSlider__fadeOut': showAnimateType === ShowAnimateEnum.Out
         }"
+        :style="{
+          background: `rgba(0, 0, 0, ${backdropOpacity})`,
+        }"
         @animationend="onShowAnimateEnd"
       />
       <div class="PhotoSlider__BannerWrap">
@@ -27,12 +30,13 @@
         </div>
       </div>
       <div
-        v-for="(item, currentIndex) in items"
+        v-for="item in showItems"
         :key="item.key"
         class="PhotoSlider__PhotoBox"
         :style="{
-          left: `${(innerWidth + horizontalOffset) * currentIndex}px`,
-          transform: `translate3d(-${(innerWidth + horizontalOffset) * index}px, 0px, 0px)`
+          left: `${(innerWidth + horizontalOffset) * getItemIndex(item)}px`,
+          transition: hasMove ? undefined : 'transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1)',
+          transform: `translate3d(${-(innerWidth + horizontalOffset) * index + touchMoveX}px, 0px, 0px)`
         }"
         @click="handleClickMask"
       >
@@ -41,6 +45,9 @@
           :show-animate-type="showAnimateType"
           :src="item.src"
           @click.stop="handleClickPhoto"
+          @touchStart="handleTouchStart"
+          @touchMove="handleTouchMove"
+          @touchEnd="handleTouchEnd"
         />
       </div>
       <div
@@ -56,12 +63,12 @@
 <script lang='ts'>
 import { defineComponent, computed, toRefs, PropType } from 'vue';
 import PhotoView from '../PhotoView/index.vue';
-import { horizontalOffset } from '../constant';
+import { horizontalOffset, minSwitchImageOffset, defaultBackdropOpacity } from '../constant';
 import useBodyEffect from './useBodyEffect';
 import useInnerWidth from './useInnerWidth';
 import Close from './Close.vue';
 import useAnimationHandle from './useAnimationHandle';
-import { ItemType, ShowAnimateEnum } from '../types';
+import { ItemType, ShowAnimateEnum, TouchTypeEnum } from '../types';
 
 export default defineComponent({
   name: 'PhotoSlider',
@@ -92,7 +99,7 @@ export default defineComponent({
       required: true,
     }
   },
-  emits: ['clickPhoto', 'clickMask', 'clickClose'],
+  emits: ['clickPhoto', 'clickMask', 'changeIndex', 'closeModal'],
   setup(props) {
     const { items, index, visible } = toRefs(props);
     const currentItem = computed<ItemType>(() => {
@@ -118,9 +125,94 @@ export default defineComponent({
     return {
       horizontalOffset,
       ShowAnimateEnum,
+      // 触摸相关
+      touched: false,
+      hasMove: false,
+      clientX: 0,
+      clientY: 0,
+      touchMoveX: 0,
+      backdropOpacity: defaultBackdropOpacity,
     };
   },
+  computed: {
+    showItems() {
+      const { index, items } = this;
+      return items.slice(Math.max(index - 1, 0), Math.min(index + 2, items.length));
+    }
+  },
   methods: {
+    handleTouchStart(clientX: number, clientY: number) {
+      this.touched = true;
+      this.clientX = clientX;
+      this.clientY = clientY;
+    },
+    handleTouchMove(touchType: TouchTypeEnum, clientX: number, clientY: number) {
+      if (touchType === TouchTypeEnum.X) {
+        this.handleTouchHorizontalMove(clientX);
+      }
+      if (touchType === TouchTypeEnum.Y) {
+        this.handleTouchVerticalMove(clientX, clientY);
+      }
+    },
+    handleTouchHorizontalMove(clientX: number) {
+      let touchMoveX = clientX - this.clientX;
+
+      // 第一张和最后一张超出时拖拽距离减半
+      if (
+        (this.index === 0 && touchMoveX > 0) ||
+        (this.index === this.items.length - 1 && touchMoveX < 0)
+      ) {
+        touchMoveX = touchMoveX / 2;
+      }
+
+      this.hasMove = clientX !== this.clientX;
+      this.touchMoveX = touchMoveX;
+    },
+    handleTouchVerticalMove(clientX: number, clientY: number) {
+      let touchMoveY = Math.abs(clientY - this.clientY);
+      const opacity = Math.max(
+        Math.min(defaultBackdropOpacity, defaultBackdropOpacity - touchMoveY / 100 / 4),
+        0
+      );
+
+      this.hasMove = clientX !== this.clientX || clientY !== this.clientY;
+      this.backdropOpacity = opacity;
+    },
+    handleTouchEnd(touchType: TouchTypeEnum, clientX: number, clientY: number) {
+      if (touchType === TouchTypeEnum.X) {
+        this.handleTouchHorizontalEnd(clientX);
+      }
+      if (touchType === TouchTypeEnum.Y) {
+        this.handleTouchVerticalEnd(clientY);
+      }
+      this.touched = false;
+      this.hasMove = false;
+      this.clientX = 0;
+      this.clientY = 0;
+      this.touchMoveX = 0;
+      this.backdropOpacity = defaultBackdropOpacity;
+    },
+    handleTouchHorizontalEnd(clientX: number) {
+      const offsetX = clientX - this.clientX;
+      // 下一张
+      if (offsetX < -minSwitchImageOffset && this.index < this.items.length - 1) {
+        this.$emit('changeIndex', this.index + 1);
+      }
+      // 上一张
+      if (offsetX > minSwitchImageOffset && this.index > 0) {
+        this.$emit('changeIndex', this.index - 1);
+      }
+    },
+    handleTouchVerticalEnd(clientY: number) {
+      const offsetY = clientY - this.clientY;
+
+      if (Math.abs(offsetY) > window.innerHeight * 0.14) {
+        this.$emit('closeModal');
+      }
+    },
+    getItemIndex(item: ItemType) {
+      return this.items.findIndex(({ key }) => key === item.key);
+    },
     handleClickPhoto() {
       this.$emit('clickPhoto');
     },
@@ -128,7 +220,7 @@ export default defineComponent({
       this.$emit('clickMask');
     },
     handleClickClose() {
-      this.$emit('clickClose');
+      this.$emit('closeModal');
     }
   }
 });

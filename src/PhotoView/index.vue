@@ -22,6 +22,12 @@
         :width="width"
         :height="height"
         :src="src"
+        :style="{
+          transform: `translate3d(${x}px, ${y}px, 0) scale(${scale})`,
+          transition: touched ? undefined : 'transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1)',
+        }"
+        @mousedown.prevent="handleMouseDown"
+        @touchstart.prevent="handleTouchStart"
       >
     </div>
   </div>
@@ -33,8 +39,9 @@ import { defineComponent, PropType } from 'vue';
 import Spinner from './Spinner.vue';
 import useLoadImage from './useLoadImage';
 import useWindowResize from './useWindowResize';
-import { OriginRectType, ShowAnimateEnum } from '../types';
+import { OriginRectType, ShowAnimateEnum, TouchTypeEnum } from '../types';
 import getAnimateOrigin from '../utils/getAnimateOrigin';
+import useMoveImage from './useMoveImage';
 
 export default defineComponent({
   name: 'PhotoView',
@@ -64,19 +71,39 @@ export default defineComponent({
       default: null,
     }
   },
-  setup(props) {
+  emits: ['touchStart', 'touchMove', 'touchEnd'],
+  setup(props, { emit }) {
     const { width, height, loaded, naturalWidth, naturalHeight } = useLoadImage(props.src);
     useWindowResize(width, height, naturalWidth, naturalHeight);
+
+    const onTouchStart = (clientX: number, clientY: number) => {
+      emit('touchStart', clientX, clientY);
+    };
+    const onTouchMove = (touchType: TouchTypeEnum, clientX: number, clientY: number) => {
+      emit('touchMove', touchType, clientX, clientY);
+    };
+    const onTouchEnd = (touchType: TouchTypeEnum, clientX: number, clientY: number) => {
+      emit('touchEnd', touchType, clientX, clientY);
+    };
+    const {
+      x, y, scale, touched, handleMouseDown, handleTouchStart
+    } = useMoveImage(onTouchStart, onTouchMove, onTouchEnd);
 
     return {
       width,
       height,
-      loaded
+      loaded,
+      x,
+      y,
+      scale,
+      touched,
+      handleMouseDown,
+      handleTouchStart
     };
   },
   data() {
     return {
-      ShowAnimateEnum
+      ShowAnimateEnum,
     };
   },
   methods: {
@@ -128,6 +155,14 @@ export default defineComponent({
     &.PhotoView__animateOut {
       opacity: 1;
       animation: PhotoView__animateOut 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) both;
+    }
+
+    .PhotoView__Photo {
+      cursor: grab;
+
+      &:active {
+        cursor: grabbing;
+      }
     }
   }
 }

@@ -13,6 +13,7 @@ module.exports = {
     node: true,
   },
   rules: {
-    'semi': 2
+    'semi': 2,
+    '@typescript-eslint/no-empty-function': 1
   }
 };
