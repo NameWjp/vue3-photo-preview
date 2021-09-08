@@ -41,10 +41,17 @@ export default defineComponent({
       default: true,
     }
   },
-  setup() {
-    const { index, updateIndex } = useIndex();
+  emits: ['indexChange', 'visibleChange'],
+  setup(_props, { emit }) {
+    const onIndexChange = () => {
+      emit('indexChange', { index, items, visible });
+    };
+    const onVisibleChange = () => {
+      emit('visibleChange', { index, items, visible });
+    };
+    const { index, updateIndex } = useIndex(onIndexChange);
     const { items, updateItem, removeItem } = useItems(index);
-    const { visible, handleHide, handleShow } = useVisible(items, index);
+    const { visible, handleHide, handleShow } = useVisible(items, index, onVisibleChange);
 
     provide(updateItemKey, updateItem);
     provide(removeItemKey, removeItem);

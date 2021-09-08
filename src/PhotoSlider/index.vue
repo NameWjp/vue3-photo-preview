@@ -50,6 +50,22 @@
           @touchEnd="handleTouchEnd"
         />
       </div>
+      <template v-if="!isTouchDevice">
+        <div
+          v-if="index > 0"
+          class="PhotoSlider__ArrowLeft"
+          @click="handlePrevious"
+        >
+          <arrow-left />
+        </div>
+        <div
+          v-if="index < items.length - 1"
+          class="PhotoSlider__ArrowRight"
+          @click="handleNext"
+        >
+          <arrow-right />
+        </div>
+      </template>
       <div
         v-if="currentItem.intro"
         class="PhotoSlider__FooterWrap"
@@ -67,14 +83,19 @@ import { horizontalOffset, minSwitchImageOffset, defaultBackdropOpacity } from '
 import useBodyEffect from './useBodyEffect';
 import useInnerWidth from './useInnerWidth';
 import Close from './Close.vue';
+import ArrowLeft from './ArrowLeft.vue';
+import ArrowRight from './ArrowRight.vue';
 import useAnimationHandle from './useAnimationHandle';
 import { ItemType, ShowAnimateEnum, TouchTypeEnum } from '../types';
+import isTouchDevice from '../utils/isTouchDevice';
 
 export default defineComponent({
   name: 'PhotoSlider',
   components: {
     PhotoView,
-    Close
+    Close,
+    ArrowLeft,
+    ArrowRight,
   },
   props: {
     /**
@@ -125,6 +146,7 @@ export default defineComponent({
     return {
       horizontalOffset,
       ShowAnimateEnum,
+      isTouchDevice,
       // 触摸相关
       touched: false,
       hasMove: false,
@@ -195,11 +217,11 @@ export default defineComponent({
       const offsetX = clientX - this.clientX;
       // 下一张
       if (offsetX < -minSwitchImageOffset && this.index < this.items.length - 1) {
-        this.$emit('changeIndex', this.index + 1);
+        this.handleNext();
       }
       // 上一张
       if (offsetX > minSwitchImageOffset && this.index > 0) {
-        this.$emit('changeIndex', this.index - 1);
+        this.handlePrevious();
       }
     },
     handleTouchVerticalEnd(clientY: number) {
@@ -216,6 +238,12 @@ export default defineComponent({
     },
     getItemIndex(item: ItemType) {
       return this.items.findIndex(({ key }) => key === item.key);
+    },
+    handlePrevious() {
+      this.$emit('changeIndex', this.index - 1);
+    },
+    handleNext() {
+      this.$emit('changeIndex', this.index + 1);
     },
     handleClickPhoto() {
       this.$emit('clickPhoto');
@@ -242,6 +270,8 @@ export default defineComponent({
 
 .PhotoSlider__Wrapper.PhotoSlider__Clean {
   .PhotoSlider__BannerWrap,
+  .PhotoSlider__ArrowLeft,
+  .PhotoSlider__ArrowRight,
   .PhotoSlider__FooterWrap {
     opacity: 0;
   }
@@ -327,6 +357,44 @@ export default defineComponent({
     align-items: center;
     z-index: 10;
     overflow: hidden;
+  }
+
+  .PhotoSlider__ArrowLeft {
+    left: 0;
+  }
+
+  .PhotoSlider__ArrowRight {
+    right: 0;
+  }
+
+  .PhotoSlider__ArrowLeft,
+  .PhotoSlider__ArrowRight {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto 0 auto 0;
+    width: 70px;
+    height: 100px;
+    opacity: 0.7;
+    z-index: 20;
+    cursor: pointer;
+    transition: opacity 0.2s linear;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    svg {
+      box-sizing: content-box;
+      padding: 10px;
+      width: 24px;
+      height: 24px;
+      fill: white;
+      background: rgba(0, 0, 0, 0.3);
+    }
   }
 
   .PhotoSlider__FooterWrap {

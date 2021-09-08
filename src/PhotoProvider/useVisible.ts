@@ -7,11 +7,16 @@ type useVisibleReturn = {
   handleShow: HandleShowType;
 }
 
-export default function useVisible(items: Ref<ItemType[]>, index: Ref<number>): useVisibleReturn {
+export default function useVisible(
+  items: Ref<ItemType[]>,
+  index: Ref<number>,
+  onVisibleChange: () => void
+): useVisibleReturn {
   const visible = ref(false);
 
   const handleHide = () => {
     visible.value = false;
+    onVisibleChange();
   };
 
   const handleShow = (key: string) => {
@@ -19,6 +24,7 @@ export default function useVisible(items: Ref<ItemType[]>, index: Ref<number>): 
     if (itemIndex > -1) {
       index.value = itemIndex;
       visible.value = true;
+      onVisibleChange();
     }
   };
 
