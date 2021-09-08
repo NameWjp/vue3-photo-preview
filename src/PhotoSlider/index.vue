@@ -16,7 +16,7 @@
         :style="{
           background: `rgba(0, 0, 0, ${backdropOpacity})`,
         }"
-        @animationend="onShowAnimateEnd"
+        @animationend="onShowAnimateEnd(), resetBackdropOpacity()"
       />
       <div class="PhotoSlider__BannerWrap">
         <div class="PhotoSlider__Counter">
@@ -190,7 +190,6 @@ export default defineComponent({
       this.clientX = 0;
       this.clientY = 0;
       this.touchMoveX = 0;
-      this.backdropOpacity = defaultBackdropOpacity;
     },
     handleTouchHorizontalEnd(clientX: number) {
       const offsetX = clientX - this.clientX;
@@ -208,7 +207,12 @@ export default defineComponent({
 
       if (Math.abs(offsetY) > window.innerHeight * 0.14) {
         this.$emit('closeModal');
+      } else {
+        this.resetBackdropOpacity();
       }
+    },
+    resetBackdropOpacity() {
+      this.backdropOpacity = defaultBackdropOpacity;
     },
     getItemIndex(item: ItemType) {
       return this.items.findIndex(({ key }) => key === item.key);
@@ -259,7 +263,6 @@ export default defineComponent({
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 1);
     z-index: -1;
 
     &.PhotoSlider__fadeIn {

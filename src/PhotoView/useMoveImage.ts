@@ -36,46 +36,84 @@ export default function useMoveImage(
   const handleMouseDown = (e: MouseEvent) => {
     if (isTouchDevice) return;
 
-    touched.value = true;
-    clientX.value = e.clientX;
-    clientY.value = e.clientY;
-
-    onTouchStart(e.clientX, e.clientY);
+    handleDown(e.clientX, e.clientY);
 
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseup', handleMouseUp);
   };
 
-  const handleMouseMove = throttle((e: MouseEvent) => {
+  const handleTouchStart = (e: TouchEvent) => {
+    if (!isTouchDevice) return;
+
+    const touch = e.touches[0];
+    handleDown(touch.clientX, touch.clientY);
+
+    window.addEventListener('touchmove', handleTouchMove);
+    window.addEventListener('touchend', handleTouchEnd);
+  };
+
+  const handleDown = (newClientX: number, newClientY: number) => {
+    touched.value = true;
+    clientX.value = newClientX;
+    clientY.value = newClientY;
+
+    onTouchStart(newClientX, newClientY);
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
     if (isTouchDevice || !touched.value) return;
 
+    handleMove(e.clientX, e.clientY);
+  };
+
+  const handleTouchMove = (e: TouchEvent) => {
+    if (!isTouchDevice || !touched.value) return;
+
+    const touch = e.touches[0];
+    handleMove(touch.clientX, touch.clientY);
+  };
+
+  const handleMove = throttle((newClientX: number, newClientY: number) => {
     // 初始化触摸状态
     if (touchType.value === TouchTypeEnum.Normal) {
-      const isMoveX = Math.abs(e.clientX - clientX.value) > minStartTouchOffset;
-      const isMoveY = Math.abs(e.clientY - clientY.value) > minStartTouchOffset;
-      if (!isMoveX && !isMoveY) {
-        // 缓慢移动重置触摸初始坐标
-        clientX.value = e.clientX;
-        clientY.value = e.clientY;
-        return;
-      }
+      const isMoveX = Math.abs(newClientX - clientX.value) > minStartTouchOffset;
+      const isMoveY = Math.abs(newClientY - clientY.value) > minStartTouchOffset;
+
+      if (!isMoveX && !isMoveY) return;
 
       // 水平方向优先
       touchType.value = isMoveX ? TouchTypeEnum.X : TouchTypeEnum.Y;
     }
 
-    onTouchMove(touchType.value, e.clientX, e.clientY);
+    onTouchMove(touchType.value, newClientX, newClientY);
 
     if (touchType.value === TouchTypeEnum.Y) {
-      x.value = e.clientX - clientX.value;
-      y.value = e.clientY - clientY.value;
+      x.value = newClientX - clientX.value;
+      y.value = newClientY - clientY.value;
     }
   }, 8, { trailing: false });
 
   const handleMouseUp = (e: MouseEvent) => {
     if (isTouchDevice) return;
 
-    onTouchEnd(touchType.value, e.clientX, e.clientY);
+    handleUp(e.clientX, e.clientY);
+
+    window.removeEventListener('mousemove', handleMouseMove);
+    window.removeEventListener('mouseup', handleMouseUp);
+  };
+
+  const handleTouchEnd = (e: TouchEvent) => {
+    if (!isTouchDevice) return;
+
+    const touch = e.changedTouches[0];
+    handleUp(touch.clientX, touch.clientY);
+
+    window.removeEventListener('touchmove', handleTouchMove);
+    window.removeEventListener('touchend', handleTouchEnd);
+  };
+
+  const handleUp = (newClientX: number, newClientY: number) => {
+    onTouchEnd(touchType.value, newClientX, newClientY);
 
     touched.value = false;
     touchType.value = TouchTypeEnum.Normal;
@@ -83,16 +121,6 @@ export default function useMoveImage(
     clientY.value = 0;
     x.value = 0;
     y.value = 0;
-
-    window.removeEventListener('mousemove', handleMouseMove);
-    window.removeEventListener('mouseup', handleMouseUp);
-  };
-
-  const handleTouchStart = (e: TouchEvent) => {
-    if (!isTouchDevice) return;
-
-    console.log('touch事件执行');
-    console.log(e);
   };
 
   return {
