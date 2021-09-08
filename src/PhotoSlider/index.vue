@@ -35,9 +35,10 @@
         class="PhotoSlider__PhotoBox"
         :style="{
           left: `${(innerWidth + horizontalOffset) * getItemIndex(item)}px`,
-          transition: hasMove ? undefined : 'transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1)',
+          transition: getTransition(),
           transform: `translate3d(${-(innerWidth + horizontalOffset) * index + touchMoveX}px, 0px, 0px)`
         }"
+        @transitionend="resetNeedTransition"
         @click="handleClickMask"
       >
         <photo-view
@@ -118,7 +119,14 @@ export default defineComponent({
     visible: {
       type: Boolean,
       required: true,
-    }
+    },
+    /**
+     * 箭头切换是否需要过渡
+     */
+    shouldTransition: {
+      type: Boolean,
+      default: true,
+    },
   },
   emits: ['clickPhoto', 'clickMask', 'changeIndex', 'closeModal'],
   setup(props) {
@@ -150,6 +158,7 @@ export default defineComponent({
       // 触摸相关
       touched: false,
       hasMove: false,
+      needTransition: false,
       clientX: 0,
       clientY: 0,
       touchMoveX: 0,
@@ -165,6 +174,7 @@ export default defineComponent({
   methods: {
     handleTouchStart(clientX: number, clientY: number) {
       this.touched = true;
+      this.needTransition = false;
       this.clientX = clientX;
       this.clientY = clientY;
     },
@@ -207,6 +217,10 @@ export default defineComponent({
       if (touchType === TouchTypeEnum.Y) {
         this.handleTouchVerticalEnd(clientY);
       }
+      // 只要移动过，则需要动画过渡
+      if (this.hasMove) {
+        this.needTransition = true;
+      }
       this.touched = false;
       this.hasMove = false;
       this.clientX = 0;
@@ -236,6 +250,9 @@ export default defineComponent({
     resetBackdropOpacity() {
       this.backdropOpacity = defaultBackdropOpacity;
     },
+    resetNeedTransition() {
+      this.needTransition = false;
+    },
     getItemIndex(item: ItemType) {
       return this.items.findIndex(({ key }) => key === item.key);
     },
@@ -253,6 +270,16 @@ export default defineComponent({
     },
     handleClickClose() {
       this.$emit('closeModal');
+    },
+    getTransition() {
+      const transition = 'transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1)';
+      if (this.needTransition) {
+        return transition;
+      }
+      if (this.hasMove) {
+        return undefined;
+      }
+      return this.shouldTransition ? transition : undefined;
     }
   }
 });

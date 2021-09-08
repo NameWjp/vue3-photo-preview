@@ -4,6 +4,7 @@
   <photo-slider
     :visible="visible"
     :index="index"
+    :should-transition="shouldTransition"
     :items="items"
     @clickPhoto="handleClickPhoto"
     @clickMask="handleClickMask"
@@ -39,7 +40,14 @@ export default defineComponent({
     maskClosable: {
       type: Boolean,
       default: true,
-    }
+    },
+    /**
+     * 箭头切换是否需要过渡
+     */
+    shouldTransition: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ['indexChange', 'visibleChange'],
   setup(_props, { emit }) {
