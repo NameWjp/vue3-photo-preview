@@ -2,6 +2,7 @@
   <span
     v-if="$slots.default()"
     ref="root"
+    style="display:inline-block;"
     @click="handleClick"
   >
     <!-- @slot 默认插槽 -->

@@ -30,6 +30,29 @@ import 'vue3-photo-preview/dist/index.css';
   </Story>
 </Canvas>
 
+## 通过按钮触发
+<Canvas>
+  <Story name="通过按钮触发">
+    {
+      () => ({
+        setup() {
+          return {
+            imgList
+          }
+        },
+        components: { PhotoProvider, PhotoConsumer },
+        template: `
+          <photo-provider>
+            <PhotoConsumer v-for="(src, index) in imgList" :intro="src" :key="src" :src="src">
+              <button v-if="index === 0">打开预览</button>
+            </PhotoConsumer>
+          </photo-provider>
+        `
+      })
+    }
+  </Story>
+</Canvas>
+
 ## Props
 
 ### PhotoProvider

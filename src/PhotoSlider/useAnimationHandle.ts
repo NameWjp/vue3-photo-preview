@@ -15,24 +15,22 @@ export default function useAnimationHandle(visible: Ref<boolean>, currentItem: R
 
   watch(visible, () => {
     const originRef = currentItem.value.originRef;
+    // 点击打开按钮和关闭时收集位置信息，用于过渡动画
+    if (originRef && originRef.nodeType === 1) {
+      const { top, left, width, height } = originRef.getBoundingClientRect();
+      originRect.value = {
+        left, top, width, height
+      };
+    } else {
+      originRect.value = null;
+    }
 
     if (visible.value) {
-      // 点击打开按钮时收集位置信息，用于过渡动画
-      if (originRef && originRef.nodeType === 1) {
-        const { top, left, width, height } = originRef.getBoundingClientRect();
-        originRect.value = {
-          left, top, width, height
-        };
-      }
       // 设置动画类型
       showAnimateType.value = ShowAnimateEnum.In;
       // 显示图片
       photoVisible.value = true;
     } else {
-      // 点击关闭按钮时，如果不存在打开的按钮，则将位置信息置空
-      if (originRect.value && !originRef) {
-        originRect.value = null;
-      }
       // 设置动画类型
       showAnimateType.value = ShowAnimateEnum.Out;
     }
