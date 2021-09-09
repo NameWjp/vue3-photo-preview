@@ -3,6 +3,7 @@
     v-if="$slots.default()"
     ref="root"
     style="display:inline-block;"
+    class="PhotoConsumer"
     @click="handleClick"
   >
     <!-- @slot 默认插槽 -->
