@@ -4,7 +4,7 @@
       v-if="photoVisible"
       class="PhotoSlider__Wrapper"
       :class="{
-        'PhotoSlider__Clean': !(showAnimateType === ShowAnimateEnum.None)
+        'PhotoSlider__Clean': showAnimateType !== ShowAnimateEnum.None || !overlayVisible
       }"
     >
       <div
@@ -49,6 +49,7 @@
           @touchStart="handleTouchStart"
           @touchMove="handleTouchMove"
           @touchEnd="handleTouchEnd"
+          @singleTap="handleSingleTap"
         />
       </div>
       <template v-if="!isTouchDevice">
@@ -163,6 +164,8 @@ export default defineComponent({
       clientY: 0,
       touchMoveX: 0,
       backdropOpacity: defaultBackdropOpacity,
+      // 是否显示覆盖物
+      overlayVisible: true,
     };
   },
   computed: {
@@ -172,6 +175,9 @@ export default defineComponent({
     }
   },
   methods: {
+    handleSingleTap() {
+      this.overlayVisible = !this.overlayVisible;
+    },
     handleTouchStart(clientX: number, clientY: number) {
       this.touched = true;
       this.needTransition = false;
@@ -345,6 +351,10 @@ export default defineComponent({
     background-color: rgba(0, 0, 0, 0.5);
     transition: opacity 0.2s ease-out;
     z-index: 20;
+
+    &:hover {
+      opacity: 1;
+    }
 
     .PhotoSlider__Counter {
       padding: 0 10px;

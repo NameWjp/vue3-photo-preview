@@ -71,7 +71,7 @@ export default defineComponent({
       default: null,
     }
   },
-  emits: ['touchStart', 'touchMove', 'touchEnd'],
+  emits: ['touchStart', 'touchMove', 'touchEnd', 'singleTap'],
   setup(props, { emit }) {
     const { width, height, loaded, naturalWidth, naturalHeight } = useLoadImage(props.src);
     useWindowResize(width, height, naturalWidth, naturalHeight);
@@ -85,9 +85,12 @@ export default defineComponent({
     const onTouchEnd = (touchType: TouchTypeEnum, clientX: number, clientY: number) => {
       emit('touchEnd', touchType, clientX, clientY);
     };
+    const onSingleTap = (clientX: number, clientY: number) => {
+      emit('singleTap', clientX, clientY);
+    };
     const {
       x, y, scale, touched, handleMouseDown, handleTouchStart
-    } = useMoveImage(onTouchStart, onTouchMove, onTouchEnd);
+    } = useMoveImage(onTouchStart, onTouchMove, onTouchEnd, onSingleTap);
 
     return {
       width,

@@ -3,6 +3,7 @@ import isTouchDevice from '../utils/isTouchDevice';
 import throttle from 'lodash-es/throttle';
 import { TouchTypeEnum } from '../types';
 import { minStartTouchOffset } from '../constant';
+import withContinuousTap from '../utils/withContinuousTap';
 
 type useMoveImageReturn = {
   x: Ref<number>;
@@ -16,7 +17,8 @@ type useMoveImageReturn = {
 export default function useMoveImage(
   onTouchStart: (clientX: number, clientY: number) => void,
   onTouchMove: (touchType: TouchTypeEnum, clientX: number, clientY: number) => void,
-  onTouchEnd: (touchType: TouchTypeEnum, clientX: number, clientY: number) => void
+  onTouchEnd: (touchType: TouchTypeEnum, clientX: number, clientY: number) => void,
+  onSingleTap: (clientX: number, clientY: number) => void,
 ): useMoveImageReturn {
   // 图片 x 偏移量
   const x = ref(0);
@@ -112,7 +114,17 @@ export default function useMoveImage(
     window.removeEventListener('touchend', handleTouchEnd);
   };
 
+  const onDoubleTap = () => {
+    console.log('handleDoubleTap');
+  };
+
+  const onTap = withContinuousTap<number>(onSingleTap, onDoubleTap);
+
   const handleUp = (newClientX: number, newClientY: number) => {
+    if (clientX.value === newClientX && clientY.value === newClientY) {
+      onTap(newClientX, newClientY);
+    }
+
     onTouchEnd(touchType.value, newClientX, newClientY);
 
     touched.value = false;
