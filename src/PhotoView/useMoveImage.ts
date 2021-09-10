@@ -1,9 +1,11 @@
 import { Ref, ref } from 'vue';
 import isTouchDevice from '../utils/isTouchDevice';
 import throttle from 'lodash-es/throttle';
-import { TouchTypeEnum } from '../types';
+import { TouchTypeEnum, EdgeTypeEnum } from '../types';
 import { minStartTouchOffset } from '../constant';
 import withContinuousTap from '../utils/withContinuousTap';
+import getPositionOnMoveOrScale from '../utils/getPositionOnMoveOrScale';
+import { getEdgeInfo, getEdgeTypes } from '../utils/getEdgeInfo';
 
 type useMoveImageReturn = {
   x: Ref<number>;
@@ -16,9 +18,12 @@ type useMoveImageReturn = {
 
 export default function useMoveImage(
   onTouchStart: (clientX: number, clientY: number) => void,
-  onTouchMove: (touchType: TouchTypeEnum, clientX: number, clientY: number) => void,
-  onTouchEnd: (touchType: TouchTypeEnum, clientX: number, clientY: number) => void,
+  onTouchMove: (touchType: TouchTypeEnum, clientX: number, clientY: number, edgeTypes: EdgeTypeEnum[]) => void,
+  onTouchEnd: (touchType: TouchTypeEnum, clientX: number, clientY: number, edgeTypes: EdgeTypeEnum[]) => void,
   onSingleTap: (clientX: number, clientY: number) => void,
+  width: Ref<number>,
+  naturalWidth: Ref<number>,
+  height: Ref<number>,
 ): useMoveImageReturn {
   // 图片 x 偏移量
   const x = ref(0);
@@ -34,6 +39,12 @@ export default function useMoveImage(
   const clientY = ref(0);
   // 初始触摸状态
   const touchType = ref(TouchTypeEnum.Normal);
+  // 上一次图片的 x 偏移量
+  const lastX = ref(0);
+  // 上一次图片的 y 偏移量
+  const lastY = ref(0);
+  // 边缘状态(用于缩放图片判断)
+  let edgeTypes: EdgeTypeEnum[] = [];
 
   const handleMouseDown = (e: MouseEvent) => {
     if (isTouchDevice) return;
@@ -58,6 +69,13 @@ export default function useMoveImage(
     touched.value = true;
     clientX.value = newClientX;
     clientY.value = newClientY;
+    edgeTypes = getEdgeTypes({
+      width: width.value,
+      height: height.value,
+      scale: scale.value,
+      x: lastX.value,
+      y: lastY.value
+    });
 
     onTouchStart(newClientX, newClientY);
   };
@@ -78,20 +96,36 @@ export default function useMoveImage(
   const handleMove = throttle((newClientX: number, newClientY: number) => {
     // 初始化触摸状态
     if (touchType.value === TouchTypeEnum.Normal) {
-      const isMoveX = Math.abs(newClientX - clientX.value) > minStartTouchOffset;
-      const isMoveY = Math.abs(newClientY - clientY.value) > minStartTouchOffset;
+      if (scale.value !== 1) {
+        touchType.value = TouchTypeEnum.Scale;
+      } else {
+        const isMoveX = Math.abs(newClientX - clientX.value) > minStartTouchOffset;
+        const isMoveY = Math.abs(newClientY - clientY.value) > minStartTouchOffset;
 
-      if (!isMoveX && !isMoveY) return;
+        if (!isMoveX && !isMoveY) return;
 
-      // 水平方向优先
-      touchType.value = isMoveX ? TouchTypeEnum.X : TouchTypeEnum.Y;
+        // 水平方向优先
+        touchType.value = isMoveX ? TouchTypeEnum.X : TouchTypeEnum.Y;
+      }
     }
 
-    onTouchMove(touchType.value, newClientX, newClientY);
+    onTouchMove(touchType.value, newClientX, newClientY, edgeTypes);
 
+    const newX = newClientX - clientX.value;
+    const newY = newClientY - clientY.value;
     if (touchType.value === TouchTypeEnum.Y) {
-      x.value = newClientX - clientX.value;
-      y.value = newClientY - clientY.value;
+      x.value = newX + lastX.value;
+      y.value = newY + lastY.value;
+    }
+    if (touchType.value === TouchTypeEnum.Scale) {
+      // 处于左边缘情况，右划交给父级处理，处于右边缘情况，左划交给父级处理
+      if (
+        !(newX > 0 && edgeTypes.includes(EdgeTypeEnum.Left)) &&
+        !(newX < 0 && edgeTypes.includes(EdgeTypeEnum.Right))
+      ) {
+        x.value = newX + lastX.value;
+      }
+      y.value = newY + lastY.value;
     }
   }, 8, { trailing: false });
 
@@ -114,8 +148,28 @@ export default function useMoveImage(
     window.removeEventListener('touchend', handleTouchEnd);
   };
 
-  const onDoubleTap = () => {
-    console.log('handleDoubleTap');
+  const onDoubleTap = (newClientX: number, newClientY: number) => {
+    if (touchType.value !== TouchTypeEnum.Normal) return;
+
+    if (scale.value === 1) {
+      const toScale = Math.max(2, naturalWidth.value / width.value);
+      const position = getPositionOnMoveOrScale({
+        x: x.value,
+        y: y.value,
+        clientX: newClientX,
+        clientY: newClientY,
+        fromScale: scale.value,
+        toScale,
+      });
+
+      x.value = position.x;
+      y.value = position.y;
+      scale.value = position.scale;
+    } else {
+      x.value = 0;
+      y.value = 0;
+      scale.value = 1;
+    }
   };
 
   const onTap = withContinuousTap<number>(onSingleTap, onDoubleTap);
@@ -125,14 +179,40 @@ export default function useMoveImage(
       onTap(newClientX, newClientY);
     }
 
-    onTouchEnd(touchType.value, newClientX, newClientY);
+    onTouchEnd(touchType.value, newClientX, newClientY, edgeTypes);
+
+    if (touchType.value === TouchTypeEnum.Y) {
+      x.value = 0;
+      y.value = 0;
+    }
+
+    if (touchType.value === TouchTypeEnum.Scale) {
+      const { edgeLeft, edgeRight, edgeTop, edgeBottom } = getEdgeInfo({
+        width: width.value,
+        height: height.value,
+        scale: scale.value
+      });
+      // 超出边缘回弹
+      if (x.value > edgeLeft) {
+        x.value = edgeLeft;
+      }
+      if (x.value < edgeRight) {
+        x.value = edgeRight;
+      }
+      if (y.value > edgeTop) {
+        y.value = edgeTop;
+      }
+      if (y.value < edgeBottom) {
+        y.value = edgeBottom;
+      }
+    }
 
     touched.value = false;
     touchType.value = TouchTypeEnum.Normal;
     clientX.value = 0;
     clientY.value = 0;
-    x.value = 0;
-    y.value = 0;
+    lastX.value = x.value;
+    lastY.value = y.value;
   };
 
   return {

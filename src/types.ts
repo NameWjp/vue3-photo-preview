@@ -34,4 +34,14 @@ export enum TouchTypeEnum {
   Normal,
   X, // x 轴只能水平切换图片
   Y, // y 轴只能撤销图片
+  Scale, // 缩放模式
+}
+
+// 边缘状态
+export enum EdgeTypeEnum {
+  None,
+  Left,
+  Right,
+  Top,
+  Bottom,
 }

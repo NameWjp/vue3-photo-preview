@@ -88,7 +88,7 @@ import Close from './Close.vue';
 import ArrowLeft from './ArrowLeft.vue';
 import ArrowRight from './ArrowRight.vue';
 import useAnimationHandle from './useAnimationHandle';
-import { ItemType, ShowAnimateEnum, TouchTypeEnum } from '../types';
+import { ItemType, ShowAnimateEnum, TouchTypeEnum, EdgeTypeEnum } from '../types';
 import isTouchDevice from '../utils/isTouchDevice';
 
 export default defineComponent({
@@ -184,12 +184,33 @@ export default defineComponent({
       this.clientX = clientX;
       this.clientY = clientY;
     },
-    handleTouchMove(touchType: TouchTypeEnum, clientX: number, clientY: number) {
+    handleTouchMove(touchType: TouchTypeEnum, clientX: number, clientY: number, edgeTypes: EdgeTypeEnum[]) {
+      if (touchType === TouchTypeEnum.Scale) {
+        this.handleTouchScaleMove(clientX, edgeTypes);
+      }
       if (touchType === TouchTypeEnum.X) {
         this.handleTouchHorizontalMove(clientX);
       }
       if (touchType === TouchTypeEnum.Y) {
         this.handleTouchVerticalMove(clientX, clientY);
+      }
+    },
+    handleTouchScaleMove(clientX: number, edgeTypes: EdgeTypeEnum[]) {
+      let touchMoveX = clientX - this.clientX;
+      if (
+        (touchMoveX > 0 && edgeTypes.includes(EdgeTypeEnum.Left)) ||
+        (touchMoveX < 0 && edgeTypes.includes(EdgeTypeEnum.Right))
+      ) {
+        // 第一张和最后一张超出时拖拽距离减半
+        if (
+          (this.index === 0 && touchMoveX > 0) ||
+          (this.index === this.items.length - 1 && touchMoveX < 0)
+        ) {
+          touchMoveX = touchMoveX / 2;
+        }
+
+        this.hasMove = clientX !== this.clientX;
+        this.touchMoveX = touchMoveX;
       }
     },
     handleTouchHorizontalMove(clientX: number) {
@@ -216,7 +237,10 @@ export default defineComponent({
       this.hasMove = clientX !== this.clientX || clientY !== this.clientY;
       this.backdropOpacity = opacity;
     },
-    handleTouchEnd(touchType: TouchTypeEnum, clientX: number, clientY: number) {
+    handleTouchEnd(touchType: TouchTypeEnum, clientX: number, clientY: number, edgeTypes: EdgeTypeEnum[]) {
+      if (touchType === TouchTypeEnum.Scale) {
+        this.handleTouchScaleEnd(clientX, edgeTypes);
+      }
       if (touchType === TouchTypeEnum.X) {
         this.handleTouchHorizontalEnd(clientX);
       }
@@ -232,6 +256,25 @@ export default defineComponent({
       this.clientX = 0;
       this.clientY = 0;
       this.touchMoveX = 0;
+    },
+    handleTouchScaleEnd(clientX: number, edgeTypes: EdgeTypeEnum[]) {
+      const offsetX = clientX - this.clientX;
+      // 下一张
+      if (
+        offsetX < -minSwitchImageOffset &&
+        this.index < this.items.length - 1 &&
+        edgeTypes.includes(EdgeTypeEnum.Right)
+      ) {
+        this.handleNext();
+      }
+      // 上一张
+      if (
+        offsetX > minSwitchImageOffset &&
+        this.index > 0 &&
+        edgeTypes.includes(EdgeTypeEnum.Left)
+      ) {
+        this.handlePrevious();
+      }
     },
     handleTouchHorizontalEnd(clientX: number) {
       const offsetX = clientX - this.clientX;

@@ -39,7 +39,7 @@ import { defineComponent, PropType } from 'vue';
 import Spinner from './Spinner.vue';
 import useLoadImage from './useLoadImage';
 import useWindowResize from './useWindowResize';
-import { OriginRectType, ShowAnimateEnum, TouchTypeEnum } from '../types';
+import { OriginRectType, ShowAnimateEnum, TouchTypeEnum, EdgeTypeEnum } from '../types';
 import getAnimateOrigin from '../utils/getAnimateOrigin';
 import useMoveImage from './useMoveImage';
 
@@ -79,18 +79,18 @@ export default defineComponent({
     const onTouchStart = (clientX: number, clientY: number) => {
       emit('touchStart', clientX, clientY);
     };
-    const onTouchMove = (touchType: TouchTypeEnum, clientX: number, clientY: number) => {
-      emit('touchMove', touchType, clientX, clientY);
+    const onTouchMove = (touchType: TouchTypeEnum, clientX: number, clientY: number, edgeTypes: EdgeTypeEnum[]) => {
+      emit('touchMove', touchType, clientX, clientY, edgeTypes);
     };
-    const onTouchEnd = (touchType: TouchTypeEnum, clientX: number, clientY: number) => {
-      emit('touchEnd', touchType, clientX, clientY);
+    const onTouchEnd = (touchType: TouchTypeEnum, clientX: number, clientY: number, edgeTypes: EdgeTypeEnum[]) => {
+      emit('touchEnd', touchType, clientX, clientY, edgeTypes);
     };
     const onSingleTap = (clientX: number, clientY: number) => {
       emit('singleTap', clientX, clientY);
     };
     const {
       x, y, scale, touched, handleMouseDown, handleTouchStart
-    } = useMoveImage(onTouchStart, onTouchMove, onTouchEnd, onSingleTap);
+    } = useMoveImage(onTouchStart, onTouchMove, onTouchEnd, onSingleTap, width, naturalWidth, height);
 
     return {
       width,
