@@ -1,6 +1,7 @@
 # vue3-photo-preview
 vue3的图片预览组件
 
+在线浏览: [https://namewjp.github.io/vue3-photo-preview/](https://namewjp.github.io/vue3-photo-preview/)
 
 ## 本地开发调试
 
