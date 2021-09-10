@@ -39,7 +39,6 @@ export enum TouchTypeEnum {
 
 // 边缘状态
 export enum EdgeTypeEnum {
-  None,
   Left,
   Right,
   Top,

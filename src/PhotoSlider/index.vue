@@ -201,16 +201,7 @@ export default defineComponent({
         (touchMoveX > 0 && edgeTypes.includes(EdgeTypeEnum.Left)) ||
         (touchMoveX < 0 && edgeTypes.includes(EdgeTypeEnum.Right))
       ) {
-        // 第一张和最后一张超出时拖拽距离减半
-        if (
-          (this.index === 0 && touchMoveX > 0) ||
-          (this.index === this.items.length - 1 && touchMoveX < 0)
-        ) {
-          touchMoveX = touchMoveX / 2;
-        }
-
-        this.hasMove = clientX !== this.clientX;
-        this.touchMoveX = touchMoveX;
+        this.handleTouchHorizontalMove(clientX);
       }
     },
     handleTouchHorizontalMove(clientX: number) {
