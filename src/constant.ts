@@ -17,3 +17,8 @@ export const minSwitchImageOffset = 40;
  * 默认背景透明度
  */
 export const defaultBackdropOpacity = 1;
+
+/**
+ * 最大缩放度（若图片足够大，则会超出该值）
+ */
+export const maxScale = 6;

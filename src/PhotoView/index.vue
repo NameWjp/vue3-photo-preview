@@ -28,6 +28,7 @@
         }"
         @mousedown.prevent="handleMouseDown"
         @touchstart.prevent="handleTouchStart"
+        @wheel="handleWheel"
       >
     </div>
   </div>
@@ -89,7 +90,7 @@ export default defineComponent({
       emit('singleTap', clientX, clientY);
     };
     const {
-      x, y, scale, touched, handleMouseDown, handleTouchStart
+      x, y, scale, touched, handleMouseDown, handleTouchStart, handleWheel
     } = useMoveImage(onTouchStart, onTouchMove, onTouchEnd, onSingleTap, width, naturalWidth, height);
 
     return {
@@ -101,7 +102,8 @@ export default defineComponent({
       scale,
       touched,
       handleMouseDown,
-      handleTouchStart
+      handleTouchStart,
+      handleWheel
     };
   },
   data() {

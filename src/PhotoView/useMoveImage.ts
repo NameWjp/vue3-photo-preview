@@ -2,10 +2,10 @@ import { Ref, ref } from 'vue';
 import isTouchDevice from '../utils/isTouchDevice';
 import throttle from 'lodash-es/throttle';
 import { TouchTypeEnum, EdgeTypeEnum } from '../types';
-import { minStartTouchOffset } from '../constant';
+import { minStartTouchOffset, maxScale } from '../constant';
 import withContinuousTap from '../utils/withContinuousTap';
 import getPositionOnMoveOrScale from '../utils/getPositionOnMoveOrScale';
-import { getEdgeInfo, getEdgeTypes } from '../utils/getEdgeInfo';
+import { getStandardPosition, getEdgeTypes } from '../utils/getEdgeInfo';
 
 type useMoveImageReturn = {
   x: Ref<number>;
@@ -14,6 +14,7 @@ type useMoveImageReturn = {
   touched: Ref<boolean>;
   handleMouseDown: (e: MouseEvent) => void;
   handleTouchStart: (e: TouchEvent) => void;
+  handleWheel: (e: WheelEvent) => void;
 }
 
 export default function useMoveImage(
@@ -187,24 +188,15 @@ export default function useMoveImage(
     }
 
     if (touchType.value === TouchTypeEnum.Scale) {
-      const { edgeLeft, edgeRight, edgeTop, edgeBottom } = getEdgeInfo({
+      const position = getStandardPosition({
         width: width.value,
         height: height.value,
-        scale: scale.value
+        scale: scale.value,
+        x: x.value,
+        y: y.value
       });
-      // 超出边缘回弹
-      if (x.value > edgeLeft) {
-        x.value = edgeLeft;
-      }
-      if (x.value < edgeRight) {
-        x.value = edgeRight;
-      }
-      if (y.value > edgeTop) {
-        y.value = edgeTop;
-      }
-      if (y.value < edgeBottom) {
-        y.value = edgeBottom;
-      }
+      x.value = position.x;
+      y.value = position.y;
     }
 
     touched.value = false;
@@ -215,12 +207,38 @@ export default function useMoveImage(
     lastY.value = y.value;
   };
 
+  const handleWheel = (e: WheelEvent) => {
+    const endScale = scale.value - e.deltaY / 100 / 2;
+    const toScale = Math.max(Math.min(endScale, Math.max(maxScale, naturalWidth.value / width.value)), 1);
+    const position = getPositionOnMoveOrScale({
+      x: x.value,
+      y: y.value,
+      clientX: e.clientX,
+      clientY: e.clientY,
+      fromScale: scale.value,
+      toScale,
+    });
+    const standardPosition = getStandardPosition({
+      width: width.value,
+      height: height.value,
+      scale: position.scale,
+      x: position.x,
+      y: position.y
+    });
+    x.value = standardPosition.x;
+    y.value = standardPosition.y;
+    lastX.value = standardPosition.x;
+    lastY.value = standardPosition.y;
+    scale.value = standardPosition.scale;
+  };
+
   return {
     x,
     y,
     scale,
     touched,
     handleMouseDown,
-    handleTouchStart
+    handleTouchStart,
+    handleWheel
   };
 }

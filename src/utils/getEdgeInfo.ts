@@ -80,3 +80,38 @@ export function getEdgeTypes({
 
   return edgeTypes;
 }
+
+export function getStandardPosition({
+  width,
+  height,
+  scale,
+  x,
+  y,
+}: {
+  width: number,
+  height: number,
+  scale: number,
+  x: number,
+  y: number,
+}): {
+  x: number,
+  y: number,
+  scale: number,
+} {
+  const { edgeLeft, edgeRight, edgeTop, edgeBottom } = getEdgeInfo({ width, height, scale });
+
+  if (x > edgeLeft) {
+    x = edgeLeft;
+  }
+  if (x < edgeRight) {
+    x = edgeRight;
+  }
+  if (y > edgeTop) {
+    y = edgeTop;
+  }
+  if (y < edgeBottom) {
+    y = edgeBottom;
+  }
+
+  return { x, y, scale };
+}
