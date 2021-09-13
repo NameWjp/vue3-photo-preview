@@ -1,9 +1,10 @@
+// @ts-nocheck
 const fs = require('fs');
 const path = require('path');
 
 /**
  * @description Promise fs.readdir
- * @param {String|Buffer|URL|FileHandle} path Path
+ * @param {String|Buffer|URL} path Path
  * @return {Promise} Promise
  */
 function readDir (path) {
@@ -302,7 +303,7 @@ async function copyDir (src, dest) {
 /**
  * @description Recursively traverse all files or directory.
  * @param {String} src       Folder path
- * @param {Funtion} callback Callback
+ * @param {Function} callback Callback
  * @return {Promise} Promise
  */
 async function fileOrDirForEach(src, callback) {
@@ -349,7 +350,7 @@ async function fileOrDirForEach(src, callback) {
 /**
  * @description Recursively traverse all files.
  * @param {String} src       Folder path
- * @param {Funtion} callback Callback
+ * @param {Function} callback Callback
  * @return {Promise} Promise
  */
 async function fileForEach (src, callback) {
@@ -394,7 +395,7 @@ async function fileForEach (src, callback) {
 
 /**
  * @description fs.readFile
- * @param {String|Buffer|URL|Integer} path File path
+ * @param {String|Buffer|URL|Number} path File path
  * @param {Object|String} options          Options
  * @return {Promise} Promise
  */
@@ -414,9 +415,9 @@ async function readFile (path, options = 'utf8') {
 
 /**
  * @description fs.writeFile
- * @param {String|Buffer|URL|Integer} path         File path
+ * @param {String|Buffer|URL|Number} src         File path
  * @param {String|Buffer|TypedArray|DataView} data Data
- * @param {Object|String} options                  Options
+ * @param {Object|String} option                  Option
  * @return {Promise} Promise will return a Boolean value
  */
 async function writeFile (src, data, option = 'utf8') {
@@ -436,7 +437,7 @@ async function writeFile (src, data, option = 'utf8') {
 /**
  * @description Recursively traverse all folders.
  * @param {String} src       Folder path
- * @param {Funtion} callback Callback
+ * @param {Function} callback Callback
  * @return {Promise} Promise
  */
 async function dirForEach (src, callback) {
