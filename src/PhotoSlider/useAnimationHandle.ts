@@ -16,7 +16,7 @@ export default function useAnimationHandle(visible: Ref<boolean>, currentItem: R
   watch(visible, () => {
     const originRef = currentItem.value.originRef;
     // 点击打开按钮和关闭时收集位置信息，用于过渡动画
-    if (originRef && originRef.nodeType === 1) {
+    if (originRef && originRef.nodeType === 1 && originRef.children.length > 0) {
       const { top, left, width, height } = originRef.getBoundingClientRect();
       originRect.value = {
         left, top, width, height
