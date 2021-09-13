@@ -6,6 +6,7 @@ import { minStartTouchOffset, maxScale } from '../constant';
 import withContinuousTap from '../utils/withContinuousTap';
 import getPositionOnMoveOrScale from '../utils/getPositionOnMoveOrScale';
 import { getStandardPosition, getEdgeTypes } from '../utils/getEdgeInfo';
+import getMultipleTouchPosition from '../utils/getMultipleTouchPosition';
 
 type useMoveImageReturn = {
   x: Ref<number>;
@@ -44,13 +45,15 @@ export default function useMoveImage(
   const lastX = ref(0);
   // 上一次图片的 y 偏移量
   const lastY = ref(0);
+  // 上一次 touch 的长度
+  const lastTouchLength = ref(0);
   // 边缘状态(用于缩放图片判断)
   let edgeTypes: EdgeTypeEnum[] = [];
 
   const handleMouseDown = (e: MouseEvent) => {
     if (isTouchDevice) return;
 
-    handleDown(e.clientX, e.clientY);
+    handleDown(e.clientX, e.clientY, 0);
 
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseup', handleMouseUp);
@@ -59,17 +62,18 @@ export default function useMoveImage(
   const handleTouchStart = (e: TouchEvent) => {
     if (!isTouchDevice) return;
 
-    const touch = e.touches[0];
-    handleDown(touch.clientX, touch.clientY);
+    const touch = getMultipleTouchPosition(e);
+    handleDown(touch.clientX, touch.clientY, touch.touchLength);
 
     window.addEventListener('touchmove', handleTouchMove);
     window.addEventListener('touchend', handleTouchEnd);
   };
 
-  const handleDown = (newClientX: number, newClientY: number) => {
+  const handleDown = (newClientX: number, newClientY: number, touchLength: number) => {
     touched.value = true;
     clientX.value = newClientX;
     clientY.value = newClientY;
+    lastTouchLength.value = touchLength;
     edgeTypes = getEdgeTypes({
       width: width.value,
       height: height.value,
@@ -84,20 +88,20 @@ export default function useMoveImage(
   const handleMouseMove = (e: MouseEvent) => {
     if (isTouchDevice || !touched.value) return;
 
-    handleMove(e.clientX, e.clientY);
+    handleMove(e.clientX, e.clientY, 0);
   };
 
   const handleTouchMove = (e: TouchEvent) => {
     if (!isTouchDevice || !touched.value) return;
 
-    const touch = e.touches[0];
-    handleMove(touch.clientX, touch.clientY);
+    const touch = getMultipleTouchPosition(e);
+    handleMove(touch.clientX, touch.clientY, touch.touchLength);
   };
 
-  const handleMove = throttle((newClientX: number, newClientY: number) => {
+  const handleMove = throttle((newClientX: number, newClientY: number, touchLength: number) => {
     // 初始化触摸状态
     if (touchType.value === TouchTypeEnum.Normal) {
-      if (scale.value !== 1) {
+      if (scale.value !== 1 || touchLength) {
         touchType.value = TouchTypeEnum.Scale;
       } else {
         const isMoveX = Math.abs(newClientX - clientX.value) > minStartTouchOffset;
@@ -119,14 +123,21 @@ export default function useMoveImage(
       y.value = newY + lastY.value;
     }
     if (touchType.value === TouchTypeEnum.Scale) {
-      // 处于左边缘情况，右划交给父级处理，处于右边缘情况，左划交给父级处理
-      if (
-        !(newX > 0 && edgeTypes.includes(EdgeTypeEnum.Left)) &&
-        !(newX < 0 && edgeTypes.includes(EdgeTypeEnum.Right))
-      ) {
-        x.value = newX + lastX.value;
+      if (touchLength) {
+        const endScale = scale.value + ((touchLength - lastTouchLength.value) / 100 / 2) * scale.value;
+        const toScale = Math.max(Math.min(endScale, Math.max(maxScale, naturalWidth.value / width.value)), 1);
+        handleToScale(toScale, newClientX, newClientY);
+        lastTouchLength.value = touchLength;
+      } else {
+        // 处于左边缘情况，右划交给父级处理，处于右边缘情况，左划交给父级处理
+        if (
+          !(newX > 0 && edgeTypes.includes(EdgeTypeEnum.Left)) &&
+          !(newX < 0 && edgeTypes.includes(EdgeTypeEnum.Right))
+        ) {
+          x.value = newX + lastX.value;
+        }
+        y.value = newY + lastY.value;
       }
-      y.value = newY + lastY.value;
     }
   }, 8, { trailing: false });
 
@@ -210,13 +221,17 @@ export default function useMoveImage(
   const handleWheel = (e: WheelEvent) => {
     const endScale = scale.value - e.deltaY / 100 / 2;
     const toScale = Math.max(Math.min(endScale, Math.max(maxScale, naturalWidth.value / width.value)), 1);
+    handleToScale(toScale, e.clientX, e.clientY);
+  };
+
+  const handleToScale = (newScale: number, newClientX: number, newClientY: number) => {
     const position = getPositionOnMoveOrScale({
       x: x.value,
       y: y.value,
-      clientX: e.clientX,
-      clientY: e.clientY,
+      clientX: newClientX,
+      clientY: newClientY,
       fromScale: scale.value,
-      toScale,
+      toScale: newScale,
     });
     const standardPosition = getStandardPosition({
       width: width.value,
