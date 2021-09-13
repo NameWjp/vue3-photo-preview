@@ -24,7 +24,8 @@
     "build": "npm run clean && tsc --module commonjs && rollup -c rollup.config.ts",
     "dev": "rollup -c rollup.config.ts -w",
     "clean": "rimraf ./dist",
-    "deploy": "deploy.sh"
+    "deploy": "sh deploy.sh",
+    "publish": "npm run build && sh release.sh"
   },
   "husky": {
     "hooks": {
