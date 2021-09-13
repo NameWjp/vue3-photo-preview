@@ -174,7 +174,28 @@ export default defineComponent({
       return items.slice(Math.max(index - 1, 0), Math.min(index + 2, items.length));
     }
   },
+  created() {
+    window.addEventListener('keydown', this.handleKeyDown);
+  },
+  beforeUnmount() {
+    window.removeEventListener('keydown', this.handleKeyDown);
+  },
   methods: {
+    handleKeyDown(e: KeyboardEvent) {
+      if (this.visible) {
+        switch (e.code) {
+          case 'ArrowLeft':
+            this.handlePrevious();
+            break;
+          case 'ArrowRight':
+            this.handleNext();
+            break;
+          case 'Escape':
+            this.handleClickClose();
+            break;
+        }
+      }
+    },
     handleSingleTap() {
       this.overlayVisible = !this.overlayVisible;
     },
@@ -251,30 +272,22 @@ export default defineComponent({
     handleTouchScaleEnd(clientX: number, edgeTypes: EdgeTypeEnum[]) {
       const offsetX = clientX - this.clientX;
       // 下一张
-      if (
-        offsetX < -minSwitchImageOffset &&
-        this.index < this.items.length - 1 &&
-        edgeTypes.includes(EdgeTypeEnum.Right)
-      ) {
+      if (offsetX < -minSwitchImageOffset && edgeTypes.includes(EdgeTypeEnum.Right)) {
         this.handleNext();
       }
       // 上一张
-      if (
-        offsetX > minSwitchImageOffset &&
-        this.index > 0 &&
-        edgeTypes.includes(EdgeTypeEnum.Left)
-      ) {
+      if (offsetX > minSwitchImageOffset && edgeTypes.includes(EdgeTypeEnum.Left)) {
         this.handlePrevious();
       }
     },
     handleTouchHorizontalEnd(clientX: number) {
       const offsetX = clientX - this.clientX;
       // 下一张
-      if (offsetX < -minSwitchImageOffset && this.index < this.items.length - 1) {
+      if (offsetX < -minSwitchImageOffset) {
         this.handleNext();
       }
       // 上一张
-      if (offsetX > minSwitchImageOffset && this.index > 0) {
+      if (offsetX > minSwitchImageOffset) {
         this.handlePrevious();
       }
     },
@@ -297,10 +310,14 @@ export default defineComponent({
       return this.items.findIndex(({ key }) => key === item.key);
     },
     handlePrevious() {
-      this.$emit('changeIndex', this.index - 1);
+      if (this.index > 0) {
+        this.$emit('changeIndex', this.index - 1);
+      }
     },
     handleNext() {
-      this.$emit('changeIndex', this.index + 1);
+      if (this.index < this.items.length - 1) {
+        this.$emit('changeIndex', this.index + 1);
+      }
     },
     handleClickPhoto() {
       this.$emit('clickPhoto');
