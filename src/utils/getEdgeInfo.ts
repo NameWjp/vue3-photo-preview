@@ -81,6 +81,9 @@ export function getEdgeTypes({
   return edgeTypes;
 }
 
+/**
+ * 获取标准值
+ */
 export function getStandardPosition({
   width,
   height,
