@@ -341,6 +341,9 @@ export default defineComponent({
   .PhotoSlider__ArrowRight,
   .PhotoSlider__FooterWrap {
     opacity: 0;
+    &:hover {
+      opacity: 0;
+    }
   }
 }
 
