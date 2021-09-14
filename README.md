@@ -10,7 +10,9 @@ Demo: [https://namewjp.github.io/vue3-photo-preview/](https://namewjp.github.io/
 
 ## 开始使用
 ### 安装
-`npm install -S vue3-photo-preview`
+```
+npm install -S vue3-photo-preview
+```
 ### 全局注册
 ```js
 import vue3PhotoPreview from 'vue3-photo-preview';
