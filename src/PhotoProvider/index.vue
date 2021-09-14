@@ -5,6 +5,7 @@
     :visible="visible"
     :index="index"
     :should-transition="shouldTransition"
+    :photo-closable="photoClosable"
     :items="items"
     @clickPhoto="handleClickPhoto"
     @clickMask="handleClickMask"

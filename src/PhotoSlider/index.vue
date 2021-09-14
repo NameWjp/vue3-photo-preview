@@ -128,6 +128,13 @@ export default defineComponent({
       type: Boolean,
       default: true,
     },
+    /**
+     * 图片点击是否关闭
+     */
+    photoClosable: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ['clickPhoto', 'clickMask', 'changeIndex', 'closeModal'],
   setup(props) {
@@ -197,7 +204,10 @@ export default defineComponent({
       }
     },
     handleSingleTap() {
-      this.overlayVisible = !this.overlayVisible;
+      // 图片点击不关闭时切换覆盖物显示
+      if (!this.photoClosable) {
+        this.overlayVisible = !this.overlayVisible;
+      }
     },
     handleTouchStart(clientX: number, clientY: number) {
       this.touched = true;
