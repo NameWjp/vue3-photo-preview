@@ -25,7 +25,7 @@
     "dev": "rollup -c rollup.config.ts -w",
     "clean": "rimraf ./dist",
     "deploy": "deploy.sh",
-    "publish": "npm run build && release.sh"
+    "release": "npm run build && release.sh"
   },
   "husky": {
     "hooks": {
