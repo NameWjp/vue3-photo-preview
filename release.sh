@@ -9,8 +9,11 @@ then
   echo "Realeasing $VERSION ..."
 
   # commit
-  git add -A
-  git commit -m "build: $VERSION"
+  if [[ -n $(git diff --stat)  ]]
+  then
+    git add -A
+    git commit -m "build: $VERSION"
+  fi
   npm version $VERSION --message "release: $VERSION"
   git push origin master
 
