@@ -4,7 +4,8 @@
       v-if="photoVisible"
       class="PhotoSlider__Wrapper"
       :class="{
-        'PhotoSlider__Clean': showAnimateType !== ShowAnimateEnum.None || !overlayVisible
+        'PhotoSlider__Clean': showAnimateType !== ShowAnimateEnum.None ,
+        'PhotoSlider__Hide': !overlayVisible,
       }"
     >
       <div
@@ -374,6 +375,15 @@ export default defineComponent({
   }
 }
 
+.PhotoSlider__Wrapper.PhotoSlider__Hide {
+  .PhotoSlider__BannerWrap,
+  .PhotoSlider__ArrowLeft,
+  .PhotoSlider__ArrowRight,
+  .PhotoSlider__FooterWrap {
+    opacity: 0;
+  }
+}
+
 .PhotoSlider__Wrapper {
   position: fixed;
   left: 0;
@@ -513,6 +523,10 @@ export default defineComponent({
     background-color: rgba(0, 0, 0, 0.5);
     transition: opacity 0.2s ease-out;
     z-index: 20;
+
+    &:hover {
+      opacity: 1;
+    }
   }
 }
 </style>

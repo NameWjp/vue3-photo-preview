@@ -34,17 +34,17 @@ app.use(vue3PhotoPreview);
 
 ## API
 ### PhotoProvider
-| 名称 | 类型 | 描述 | 默认值 |
-| :-----| :---- | :---- | :---- |
-| photoClosable | boolean | 图片点击是否关闭 | false |
-| maskClosable | boolean | 背景点击是否关闭 | true |
-| shouldTransition | boolean | 箭头切换是否需要过渡 | false |
+| 名称 | 类型 | 描述 | 默认值 | 必填 |
+| :-----| :---- | :---- | :---- | :---- |
+| photoClosable | boolean | 图片点击是否关闭 | false | 否 |
+| maskClosable | boolean | 背景点击是否关闭 | true | 否 |
+| shouldTransition | boolean | 箭头切换是否需要过渡 | false | 否 |
 
 ### PhotoConsumer
-| 名称 | 类型 | 描述 | 默认值 |
-| :-----| :---- | :---- | :---- |
-| *src | string | 图片地址 | - |
-| intro | string | 图片介绍 | '' |
+| 名称 | 类型 | 描述 | 默认值 | 必填 |
+| :-----| :---- | :---- | :---- | :---- |
+| src | string | 图片地址 | - | 是 |
+| intro | string | 图片介绍 | '' | 否 |
 
 ## 本地开发调试
 
