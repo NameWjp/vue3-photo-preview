@@ -1,13 +1,21 @@
 export default function getSuitableImageSize(
   naturalWidth: number,
   naturalHeight: number,
+  rotate: number,
 ): {
   width: number;
   height: number;
 } {
+  let { innerWidth, innerHeight } = window;
+  // 如果图片不是水平，则调换宽高
+  const isVertical = rotate % 180 !== 0;
+  if (isVertical) {
+    [innerWidth, innerHeight] = [innerHeight, innerWidth];
+  }
+
   let width;
   let height;
-  const { innerWidth, innerHeight } = window;
+
   // 缩放到和窗口一样所需要的比例
   const scaleWidth = innerWidth / naturalWidth;
   const scaleHeight = innerHeight / naturalHeight;

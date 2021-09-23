@@ -23,7 +23,7 @@
         :height="height"
         :src="src"
         :style="{
-          transform: `translate3d(${x}px, ${y}px, 0) scale(${scale})`,
+          transform: getTransform(),
           transition: touched ? undefined : 'transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1)',
         }"
         @mousedown.prevent="handleMouseDown"
@@ -74,8 +74,7 @@ export default defineComponent({
   },
   emits: ['touchStart', 'touchMove', 'touchEnd', 'singleTap'],
   setup(props, { emit }) {
-    const { width, height, loaded, naturalWidth, naturalHeight } = useLoadImage(props.src);
-    useWindowResize(width, height, naturalWidth, naturalHeight);
+    const { width, height, loaded, naturalWidth, naturalHeight, setSuitableImageSize } = useLoadImage(props.src);
 
     const onTouchStart = (clientX: number, clientY: number) => {
       emit('touchStart', clientX, clientY);
@@ -89,9 +88,16 @@ export default defineComponent({
     const onSingleTap = (clientX: number, clientY: number) => {
       emit('singleTap', clientX, clientY);
     };
+
     const {
-      x, y, scale, touched, handleMouseDown, handleTouchStart, handleWheel
-    } = useMoveImage(onTouchStart, onTouchMove, onTouchEnd, onSingleTap, width, naturalWidth, height);
+      x, y, scale, rotate, touched,
+      handleMouseDown, handleTouchStart, handleWheel, handleRotateLeft, handleRotateRight
+    } = useMoveImage(
+      width, height, naturalWidth, naturalHeight,
+      setSuitableImageSize, onTouchStart, onTouchMove, onTouchEnd, onSingleTap,
+    );
+
+    useWindowResize(naturalWidth, naturalHeight, rotate, setSuitableImageSize);
 
     return {
       width,
@@ -103,16 +109,45 @@ export default defineComponent({
       touched,
       handleMouseDown,
       handleTouchStart,
-      handleWheel
+      handleWheel,
+      rotate,
+      handleRotateLeft,
+      handleRotateRight
     };
   },
   data() {
     return {
       ShowAnimateEnum,
+      // 翻转
+      isFlipHorizontal: false,
+      isFlipVertical: false,
     };
   },
   methods: {
     getAnimateOrigin,
+    toggleFlipHorizontal() {
+      this.isFlipHorizontal = !this.isFlipHorizontal;
+    },
+    toggleFlipVertical() {
+      this.isFlipVertical = !this.isFlipVertical;
+    },
+    getTransform() {
+      const transform: Record<string, string> = {
+        translate3d: `${this.x}px, ${this.y}px, 0`,
+        scaleX: `${this.isFlipHorizontal ? '-' : ''}${this.scale}`,
+        scaleY: `${this.isFlipVertical ? '-' : ''}${this.scale}`
+      };
+      if (this.rotate) {
+        transform.rotate = `${this.rotate}deg`;
+      }
+
+      let str = '';
+      Object.keys(transform).forEach(name => {
+        str += `${name}(${transform[name]})`;
+      });
+
+      return str;
+    }
   }
 });
 </script>

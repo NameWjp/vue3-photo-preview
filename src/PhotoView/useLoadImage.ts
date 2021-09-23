@@ -7,6 +7,7 @@ export default function useLoadImage(src: string): {
   loaded: Ref<boolean>;
   naturalWidth: Ref<number>;
   naturalHeight: Ref<number>;
+  setSuitableImageSize: (actualWidth: number, actualHeight: number, rotate: number) => void;
 } {
   const naturalWidth = ref(0);
   const naturalHeight = ref(0);
@@ -19,11 +20,15 @@ export default function useLoadImage(src: string): {
   img.onload = () => {
     naturalWidth.value = img.naturalWidth;
     naturalHeight.value = img.naturalHeight;
-    const imageSize = getSuitableImageSize(naturalWidth.value, naturalHeight.value);
-    width.value = imageSize.width;
-    height.value = imageSize.height;
+    setSuitableImageSize(naturalWidth.value, naturalHeight.value, 0);
     loaded.value = true;
   };
+
+  function setSuitableImageSize(actualWidth: number, actualHeight: number, rotate: number) {
+    const imageSize = getSuitableImageSize(actualWidth, actualHeight, rotate);
+    width.value = imageSize.width;
+    height.value = imageSize.height;
+  }
 
   img.src = src;
 
@@ -32,6 +37,7 @@ export default function useLoadImage(src: string): {
     height,
     loaded,
     naturalWidth,
-    naturalHeight
+    naturalHeight,
+    setSuitableImageSize
   };
 }

@@ -23,15 +23,31 @@
         <div class="PhotoSlider__Counter">
           {{ index + 1 }} / {{ items.length }}
         </div>
-        <div
-          class="PhotoSlider__Close"
-          @click="handleClickClose"
-        >
-          <close class="PhotoSlider__CloseIcon" />
+        <div class="PhotoSlider__BannerRight">
+          <rotate-left
+            class="PhotoSlider__BannerIcon"
+            @click="handleRotateLeft"
+          />
+          <rotate-right
+            class="PhotoSlider__BannerIcon"
+            @click="handleRotateRight"
+          />
+          <flip-horizontal
+            class="PhotoSlider__BannerIcon"
+            @click="toggleFlipHorizontal"
+          />
+          <filp-vertical
+            class="PhotoSlider__BannerIcon"
+            @click="toggleFlipVertical"
+          />
+          <close
+            class="PhotoSlider__BannerIcon"
+            @click="handleClickClose"
+          />
         </div>
       </div>
       <div
-        v-for="item in showItems"
+        v-for="item in items"
         :key="item.key"
         class="PhotoSlider__PhotoBox"
         :style="{
@@ -43,6 +59,7 @@
         @click="handleClickMask"
       >
         <photo-view
+          :ref="setPhotoViewRef"
           :origin-rect="originRect"
           :show-animate-type="showAnimateType"
           :src="item.src"
@@ -88,6 +105,10 @@ import useInnerWidth from './useInnerWidth';
 import Close from './Close.vue';
 import ArrowLeft from './ArrowLeft.vue';
 import ArrowRight from './ArrowRight.vue';
+import RotateLeft from './RotateLeft.vue';
+import RotateRight from './RotateRight.vue';
+import FlipHorizontal from './FlipHorizontal.vue';
+import FilpVertical from './FilpVertical.vue';
 import useAnimationHandle from './useAnimationHandle';
 import { ItemType, ShowAnimateEnum, TouchTypeEnum, EdgeTypeEnum } from '../types';
 import isTouchDevice from '../utils/isTouchDevice';
@@ -99,6 +120,10 @@ export default defineComponent({
     Close,
     ArrowLeft,
     ArrowRight,
+    RotateLeft,
+    RotateRight,
+    FlipHorizontal,
+    FilpVertical,
   },
   props: {
     /**
@@ -161,6 +186,7 @@ export default defineComponent({
   },
   data() {
     return {
+      // 常量
       horizontalOffset,
       ShowAnimateEnum,
       isTouchDevice,
@@ -174,13 +200,9 @@ export default defineComponent({
       backdropOpacity: defaultBackdropOpacity,
       // 是否显示覆盖物
       overlayVisible: true,
+      // photo-view 子组件
+      photoViewRefs: [] as InstanceType<typeof PhotoView>[],
     };
-  },
-  computed: {
-    showItems() {
-      const { index, items } = this;
-      return items.slice(Math.max(index - 1, 0), Math.min(index + 2, items.length));
-    }
   },
   created() {
     window.addEventListener('keydown', this.handleKeyDown);
@@ -188,7 +210,25 @@ export default defineComponent({
   beforeUnmount() {
     window.removeEventListener('keydown', this.handleKeyDown);
   },
+  beforeUpdate() {
+    this.photoViewRefs = [];
+  },
   methods: {
+    toggleFlipHorizontal() {
+      this.photoViewRefs[this.index].toggleFlipHorizontal();
+    },
+    toggleFlipVertical() {
+      this.photoViewRefs[this.index].toggleFlipVertical();
+    },
+    handleRotateLeft() {
+      this.photoViewRefs[this.index].handleRotateLeft();
+    },
+    handleRotateRight() {
+      this.photoViewRefs[this.index].handleRotateRight();
+    },
+    setPhotoViewRef(ref: InstanceType<typeof PhotoView>) {
+      this.photoViewRefs.push(ref);
+    },
     handleKeyDown(e: KeyboardEvent) {
       if (this.visible) {
         switch (e.code) {
@@ -436,13 +476,13 @@ export default defineComponent({
       opacity: 0.75;
     }
 
-    .PhotoSlider__Close {
+    .PhotoSlider__BannerRight {
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100%;
 
-      .PhotoSlider__CloseIcon {
+      .PhotoSlider__BannerIcon {
         vertical-align: top;
         box-sizing: border-box;
         padding: 10px;

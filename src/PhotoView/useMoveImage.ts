@@ -12,20 +12,25 @@ type useMoveImageReturn = {
   x: Ref<number>;
   y: Ref<number>;
   scale: Ref<number>;
+  rotate: Ref<number>;
   touched: Ref<boolean>;
   handleMouseDown: (e: MouseEvent) => void;
   handleTouchStart: (e: TouchEvent) => void;
   handleWheel: (e: WheelEvent) => void;
+  handleRotateLeft: () => void;
+  handleRotateRight: () => void;
 }
 
 export default function useMoveImage(
+  width: Ref<number>,
+  height: Ref<number>,
+  naturalWidth: Ref<number>,
+  naturalHeight: Ref<number>,
+  setSuitableImageSize: (actualWidth: number, actualHeight: number, rotate: number) => void,
   onTouchStart: (clientX: number, clientY: number) => void,
   onTouchMove: (touchType: TouchTypeEnum, clientX: number, clientY: number, edgeTypes: EdgeTypeEnum[]) => void,
   onTouchEnd: (touchType: TouchTypeEnum, clientX: number, clientY: number, edgeTypes: EdgeTypeEnum[]) => void,
   onSingleTap: (clientX: number, clientY: number) => void,
-  width: Ref<number>,
-  naturalWidth: Ref<number>,
-  height: Ref<number>,
 ): useMoveImageReturn {
   // 图片 x 偏移量
   const x = ref(0);
@@ -33,6 +38,8 @@ export default function useMoveImage(
   const y = ref(0);
   // 图片缩放程度
   const scale = ref(1);
+  // 图片旋转角度
+  const rotate = ref(0);
   // 图片是否处于触摸状态
   const touched = ref(false);
   // 触摸开始时 x 的坐标
@@ -78,6 +85,7 @@ export default function useMoveImage(
       width: width.value,
       height: height.value,
       scale: scale.value,
+      rotate: rotate.value,
       x: lastX.value,
       y: lastY.value
     });
@@ -199,15 +207,14 @@ export default function useMoveImage(
     }
 
     if (touchType.value === TouchTypeEnum.Scale) {
-      const position = getStandardPosition({
+      setStandardPosition({
         width: width.value,
         height: height.value,
         scale: scale.value,
+        rotate: rotate.value,
         x: x.value,
         y: y.value
       });
-      x.value = position.x;
-      y.value = position.y;
     }
 
     touched.value = false;
@@ -233,18 +240,52 @@ export default function useMoveImage(
       fromScale: scale.value,
       toScale: newScale,
     });
-    const standardPosition = getStandardPosition({
+
+    setStandardPosition({
       width: width.value,
       height: height.value,
       scale: position.scale,
+      rotate: rotate.value,
       x: position.x,
       y: position.y
     });
+  };
+
+  const setStandardPosition = (position: {
+    width: number; height: number; scale: number; rotate: number; x: number, y: number
+  }) => {
+    const standardPosition = getStandardPosition(position);
     x.value = standardPosition.x;
     y.value = standardPosition.y;
     lastX.value = standardPosition.x;
     lastY.value = standardPosition.y;
     scale.value = standardPosition.scale;
+  };
+
+  const handleRotateLeft = () => {
+    rotate.value = rotate.value - 90;
+    setSuitableImageSize(naturalWidth.value, naturalHeight.value, rotate.value);
+    setStandardPosition({
+      width: width.value,
+      height: height.value,
+      scale: scale.value,
+      rotate: rotate.value,
+      x: x.value,
+      y: y.value
+    });
+  };
+
+  const handleRotateRight = () => {
+    rotate.value = rotate.value + 90;
+    setSuitableImageSize(naturalWidth.value, naturalHeight.value, rotate.value);
+    setStandardPosition({
+      width: width.value,
+      height: height.value,
+      scale: scale.value,
+      rotate: rotate.value,
+      x: x.value,
+      y: y.value
+    });
   };
 
   return {
@@ -254,6 +295,9 @@ export default function useMoveImage(
     touched,
     handleMouseDown,
     handleTouchStart,
-    handleWheel
+    handleWheel,
+    rotate,
+    handleRotateLeft,
+    handleRotateRight
   };
 }

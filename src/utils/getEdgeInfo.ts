@@ -7,19 +7,28 @@ export function getEdgeInfo({
   width,
   height,
   scale,
+  rotate,
 }: {
   width: number,
   height: number,
-  scale: number
+  scale: number,
+  rotate: number
 }): {
   edgeLeft: number,
   edgeRight: number,
   edgeTop: number,
   edgeBottom: number,
 } {
+  // 如果图片不是水平，则调换宽高
+  const isVertical = rotate % 180 !== 0;
+  if (isVertical) {
+    [width, height] = [height, width];
+  }
+
+  const { innerWidth, innerHeight } = window;
   const currentWidth = width * scale;
   const currentHeight = height * scale;
-  const { innerWidth, innerHeight } = window;
+
   let edgeLeft, edgeRight, edgeTop, edgeBottom;
 
   if (currentWidth > innerWidth) {
@@ -53,16 +62,18 @@ export function getEdgeTypes({
   width,
   height,
   scale,
+  rotate,
   x,
   y,
 }: {
   width: number,
   height: number,
   scale: number,
+  rotate: number,
   x: number,
   y: number,
 }): EdgeTypeEnum[] {
-  const position = getEdgeInfo({ width, height, scale });
+  const position = getEdgeInfo({ width, height, scale, rotate });
   const edgeTypes: EdgeTypeEnum[] = [];
 
   if (x === position.edgeLeft) {
@@ -88,12 +99,14 @@ export function getStandardPosition({
   width,
   height,
   scale,
+  rotate,
   x,
   y,
 }: {
   width: number,
   height: number,
   scale: number,
+  rotate: number,
   x: number,
   y: number,
 }): {
@@ -101,7 +114,7 @@ export function getStandardPosition({
   y: number,
   scale: number,
 } {
-  const { edgeLeft, edgeRight, edgeTop, edgeBottom } = getEdgeInfo({ width, height, scale });
+  const { edgeLeft, edgeRight, edgeTop, edgeBottom } = getEdgeInfo({ width, height, scale, rotate });
 
   if (x > edgeLeft) {
     x = edgeLeft;
