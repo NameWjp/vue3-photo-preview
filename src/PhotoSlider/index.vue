@@ -24,6 +24,10 @@
           {{ index + 1 }} / {{ items.length }}
         </div>
         <div class="PhotoSlider__BannerRight">
+          <download
+            class="PhotoSlider__BannerIcon"
+            @click="handleDownload"
+          />
           <rotate-left
             class="PhotoSlider__BannerIcon"
             @click="handleRotateLeft"
@@ -109,6 +113,7 @@ import RotateLeft from './RotateLeft.vue';
 import RotateRight from './RotateRight.vue';
 import FlipHorizontal from './FlipHorizontal.vue';
 import FilpVertical from './FilpVertical.vue';
+import Download from './Download.vue';
 import useAnimationHandle from './useAnimationHandle';
 import { ItemType, ShowAnimateEnum, TouchTypeEnum, EdgeTypeEnum } from '../types';
 import isTouchDevice from '../utils/isTouchDevice';
@@ -124,6 +129,7 @@ export default defineComponent({
     RotateRight,
     FlipHorizontal,
     FilpVertical,
+    Download,
   },
   props: {
     /**
@@ -214,6 +220,15 @@ export default defineComponent({
     this.photoViewRefs = [];
   },
   methods: {
+    handleDownload() {
+      const item = this.items[this.index];
+      const a = document.createElement('a');
+      const paths = item.src.split('.')[0].split('/');
+      const name = paths[paths.length - 1];
+      a.download = item.downloadName || name;
+      a.href = item.src;
+      a.dispatchEvent(new MouseEvent('click'));
+    },
     toggleFlipHorizontal() {
       this.photoViewRefs[this.index].toggleFlipHorizontal();
     },

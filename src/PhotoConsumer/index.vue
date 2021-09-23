@@ -32,6 +32,13 @@ export default defineComponent({
     intro: {
       type: String,
       default: null
+    },
+    /**
+     * 图片下载名称，默认图片名称
+     */
+    downloadName: {
+      type: String,
+      default: null
     }
   },
   setup(props) {
@@ -52,7 +59,8 @@ export default defineComponent({
           key,
           src: props.src,
           originRef: root.value,
-          intro: props.intro
+          intro: props.intro,
+          downloadName: props.downloadName
         });
       }
     });
