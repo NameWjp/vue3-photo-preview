@@ -424,8 +424,10 @@ export default defineComponent({
   .PhotoSlider__ArrowRight,
   .PhotoSlider__FooterWrap {
     opacity: 0;
-    &:hover {
-      opacity: 0;
+    @media (any-hover: hover){
+      &:hover {
+        opacity: 0;
+      }
     }
   }
 }
@@ -481,8 +483,10 @@ export default defineComponent({
     transition: opacity 0.2s ease-out;
     z-index: 20;
 
-    &:hover {
-      opacity: 1;
+    @media (any-hover: hover){
+      &:hover {
+        opacity: 1;
+      }
     }
 
     .PhotoSlider__Counter {
@@ -505,8 +509,10 @@ export default defineComponent({
         cursor: pointer;
         transition: all 0.2s linear;
 
-        &:hover {
-          opacity: 1;
+        @media (any-hover: hover){
+          &:hover {
+            opacity: 1;
+          }
         }
       }
     }
@@ -549,8 +555,10 @@ export default defineComponent({
     justify-content: center;
     align-items: center;
 
-    &:hover {
-      opacity: 1;
+    @media (any-hover: hover){
+      &:hover {
+        opacity: 1;
+      }
     }
 
     svg {
@@ -579,8 +587,10 @@ export default defineComponent({
     transition: opacity 0.2s ease-out;
     z-index: 20;
 
-    &:hover {
-      opacity: 1;
+    @media (any-hover: hover){
+      &:hover {
+        opacity: 1;
+      }
     }
   }
 }
