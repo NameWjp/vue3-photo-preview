@@ -4,7 +4,9 @@ vue3 的图片预览组件
 ### 特点
 1. 基于 typescript 
 2. 支持桌面端和移动端
-3. 支持左右切换导航、上/下滑关闭、双击放大/缩小、双指放大/缩小、键盘导航/关闭、点击切换控件
+3. 支持左右切换导航、上/下滑关闭、双击放大/缩小、双指放大/缩小、键盘导航/关闭、点击切换控件、翻转、下载
+4. 图片尺寸自适应
+5. 图片切换、打开、关闭动画
 
 Demo: [https://namewjp.github.io/vue3-photo-preview/](https://namewjp.github.io/vue3-photo-preview/)
 
