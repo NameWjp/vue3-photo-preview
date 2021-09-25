@@ -103,7 +103,7 @@
 <script lang='ts'>
 import { defineComponent, computed, toRefs, PropType } from 'vue';
 import PhotoView from '../PhotoView/index.vue';
-import { horizontalOffset, minSwitchImageOffset, defaultBackdropOpacity } from '../constant';
+import { horizontalOffset, minSwitchImageOffset } from '../constant';
 import useBodyEffect from './useBodyEffect';
 import useInnerWidth from './useInnerWidth';
 import Close from './Close.vue';
@@ -167,6 +167,13 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    /**
+     * 默认背景透明度
+     */
+    defaultBackdropOpacity: {
+      type: Number,
+      default: 1,
+    }
   },
   emits: ['clickPhoto', 'clickMask', 'changeIndex', 'closeModal'],
   setup(props) {
@@ -203,7 +210,7 @@ export default defineComponent({
       clientX: 0,
       clientY: 0,
       touchMoveX: 0,
-      backdropOpacity: defaultBackdropOpacity,
+      backdropOpacity: this.defaultBackdropOpacity,
       // 是否显示覆盖物
       overlayVisible: true,
       // photo-view 子组件
@@ -308,7 +315,7 @@ export default defineComponent({
     handleTouchVerticalMove(clientX: number, clientY: number) {
       let touchMoveY = Math.abs(clientY - this.clientY);
       const opacity = Math.max(
-        Math.min(defaultBackdropOpacity, defaultBackdropOpacity - touchMoveY / 100 / 4),
+        Math.min(this.defaultBackdropOpacity, this.defaultBackdropOpacity - touchMoveY / 100 / 4),
         0
       );
 
@@ -367,7 +374,7 @@ export default defineComponent({
       }
     },
     resetBackdropOpacity() {
-      this.backdropOpacity = defaultBackdropOpacity;
+      this.backdropOpacity = this.defaultBackdropOpacity;
     },
     resetNeedTransition() {
       this.needTransition = false;

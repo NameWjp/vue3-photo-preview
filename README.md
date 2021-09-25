@@ -41,6 +41,7 @@ app.use(vue3PhotoPreview);
 | photo-closable | boolean | 图片点击是否关闭 | false | 否 |
 | mask-closable | boolean | 背景点击是否关闭 | true | 否 |
 | should-transition | boolean | 箭头切换是否需要过渡 | false | 否 |
+| default-backdrop-opacity | number | 默认背景透明度 | 1 | 否 |
 
 ### PhotoConsumer
 | 名称 | 类型 | 描述 | 默认值 | 必填 |

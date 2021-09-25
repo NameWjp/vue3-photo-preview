@@ -6,6 +6,7 @@
     :index="index"
     :should-transition="shouldTransition"
     :photo-closable="photoClosable"
+    :default-backdrop-opacity="defaultBackdropOpacity"
     :items="items"
     @clickPhoto="handleClickPhoto"
     @clickMask="handleClickMask"
@@ -49,6 +50,13 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    /**
+     * 默认背景透明度
+     */
+    defaultBackdropOpacity: {
+      type: Number,
+      default: 1,
+    }
   },
   emits: ['indexChange', 'visibleChange'],
   setup(_props, { emit }) {
