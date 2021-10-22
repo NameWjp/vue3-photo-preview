@@ -48,7 +48,7 @@ app.use(vue3PhotoPreview);
 | :-----| :---- | :---- | :---- | :---- |
 | src | string | 图片地址 | - | 是 |
 | intro | string | 图片介绍 | - | 否 |
-| download-name | string | 图片下载名称，默认图片名称 | - | 否 |
+| download-name | string | 图片下载名称 | 图片名称 | 否 |
 
 ## 本地开发调试
 
