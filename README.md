@@ -36,14 +36,21 @@ app.use(vue3PhotoPreview);
 
 ## API
 ### PhotoProvider
+#### 属性
 | 名称 | 类型 | 描述 | 默认值 | 必填 |
 | :-----| :---- | :---- | :---- | :---- |
 | photo-closable | boolean | 图片点击是否关闭 | false | 否 |
 | mask-closable | boolean | 背景点击是否关闭 | true | 否 |
 | should-transition | boolean | 箭头切换是否需要过渡 | false | 否 |
 | default-backdrop-opacity | number | 默认背景透明度 | 1 | 否 |
+#### 事件
+| 名称 | 描述 | 参数 |
+| :-----| :---- | :---- |
+| indexChange | 图片切换回调 | { index, items, visible } |
+| visibleChange | 图片显隐切换回调 | { index, items, visible } |
 
 ### PhotoConsumer
+#### 属性
 | 名称 | 类型 | 描述 | 默认值 | 必填 |
 | :-----| :---- | :---- | :---- | :---- |
 | src | string | 图片地址 | - | 是 |
