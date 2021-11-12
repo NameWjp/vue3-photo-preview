@@ -20,9 +20,9 @@ import 'vue3-photo-preview/dist/index.css';
         components: { PhotoProvider, PhotoConsumer, ViewBox },
         template: `
           <photo-provider>
-            <PhotoConsumer v-for="src in imgList" :intro="src" :key="src" :src="src">
+            <photo-consumer v-for="src in imgList" :intro="src" :key="src" :src="src">
               <ViewBox :src="src" />
-            </PhotoConsumer>
+            </photo-consumer>
           </photo-provider>
         `
       })
@@ -43,9 +43,9 @@ import 'vue3-photo-preview/dist/index.css';
         components: { PhotoProvider, PhotoConsumer },
         template: `
           <photo-provider>
-            <PhotoConsumer v-for="(src, index) in imgList" :intro="src" :key="src" :src="src">
+            <photo-consumer v-for="(src, index) in imgList" :intro="src" :key="src" :src="src">
               <button v-if="index === 0">打开预览</button>
-            </PhotoConsumer>
+            </photo-consumer>
           </photo-provider>
         `
       })
