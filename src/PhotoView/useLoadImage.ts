@@ -1,7 +1,7 @@
-import { ref, Ref } from 'vue';
+import { ref, Ref, watch } from 'vue';
 import getSuitableImageSize from '../utils/getSuitableImageSize';
 
-export default function useLoadImage(src: string): {
+export default function useLoadImage(src: Ref<string>): {
   width: Ref<number>;
   height: Ref<number>;
   loaded: Ref<boolean>;
@@ -15,22 +15,32 @@ export default function useLoadImage(src: string): {
   const height = ref(0);
   const loaded = ref(false);
 
-  const img = new Image();
-
-  img.onload = () => {
-    naturalWidth.value = img.naturalWidth;
-    naturalHeight.value = img.naturalHeight;
-    setSuitableImageSize(naturalWidth.value, naturalHeight.value, 0);
-    loaded.value = true;
-  };
-
   function setSuitableImageSize(actualWidth: number, actualHeight: number, rotate: number) {
     const imageSize = getSuitableImageSize(actualWidth, actualHeight, rotate);
     width.value = imageSize.width;
     height.value = imageSize.height;
   }
 
-  img.src = src;
+  const loadImage = (src: string) => {
+    loaded.value = false;
+
+    const img = new Image();
+
+    img.onload = () => {
+      naturalWidth.value = img.naturalWidth;
+      naturalHeight.value = img.naturalHeight;
+      setSuitableImageSize(naturalWidth.value, naturalHeight.value, 0);
+      loaded.value = true;
+    };
+
+    img.src = src;
+  };
+
+  loadImage(src.value);
+
+  watch(src, () => {
+    loadImage(src.value);
+  });
 
   return {
     width,

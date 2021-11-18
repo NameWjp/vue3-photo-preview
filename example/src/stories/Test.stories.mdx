@@ -53,6 +53,42 @@ import 'vue3-photo-preview/dist/index.css';
   </Story>
 </Canvas>
 
+## 异步更新图片地址
+<Canvas>
+  <Story name="异步更新图片地址">
+    {
+      () => ({
+        data() {
+          return {
+            index: 0,
+          }
+        },
+        computed: {
+          imageSrc() {
+            return imgList[this.index];
+          }
+        },
+        methods: {
+          asyncChangeSrc() {
+            setTimeout(() => {
+              const index = this.index + 1;
+              this.index = index % imgList.length;
+            }, 3000)
+          }
+        },
+        components: { PhotoProvider, PhotoConsumer },
+        template: `
+          <photo-provider>
+            <photo-consumer :intro="imageSrc" :src="imageSrc">
+              <button @click="asyncChangeSrc">打开预览</button>
+            </photo-consumer>
+          </photo-provider>
+        `
+      })
+    }
+  </Story>
+</Canvas>
+
 ## Props
 
 ### PhotoProvider

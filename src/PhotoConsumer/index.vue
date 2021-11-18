@@ -12,7 +12,7 @@
 </template>
 
 <script lang='ts'>
-import { defineComponent, inject, onMounted, ref } from 'vue';
+import { defineComponent, inject, onMounted, ref, watch, toRefs } from 'vue';
 import { updateItemKey, handleShowKey } from '../symbols';
 import uniqueId from 'lodash-es/uniqueId';
 
@@ -46,23 +46,25 @@ export default defineComponent({
     const handleShow = inject(handleShowKey);
     const root = ref<HTMLElement | null>(null);
     const key = uniqueId();
+    const { src, intro, downloadName } = toRefs(props);
 
     const handleClick = () => {
-      if (handleShow) {
-        handleShow(key);
-      }
+      handleShow?.(key);
     };
+    const getItem = () => ({
+      key,
+      src: src.value,
+      originRef: root.value,
+      intro: intro.value,
+      downloadName: downloadName.value
+    });
+
+    watch([src, intro, downloadName], () => {
+      updateItem?.(getItem());
+    });
 
     onMounted(() => {
-      if (updateItem) {
-        updateItem({
-          key,
-          src: props.src,
-          originRef: root.value,
-          intro: props.intro,
-          downloadName: props.downloadName
-        });
-      }
+      updateItem?.(getItem());
     });
 
     return {

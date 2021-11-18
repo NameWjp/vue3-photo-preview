@@ -36,7 +36,7 @@
 </template>
 
 <script lang='ts'>
-import { defineComponent, PropType } from 'vue';
+import { defineComponent, PropType, toRefs } from 'vue';
 import Spinner from './Spinner.vue';
 import useLoadImage from './useLoadImage';
 import useWindowResize from './useWindowResize';
@@ -74,7 +74,8 @@ export default defineComponent({
   },
   emits: ['touchStart', 'touchMove', 'touchEnd', 'singleTap'],
   setup(props, { emit }) {
-    const { width, height, loaded, naturalWidth, naturalHeight, setSuitableImageSize } = useLoadImage(props.src);
+    const { src } = toRefs(props);
+    const { width, height, loaded, naturalWidth, naturalHeight, setSuitableImageSize } = useLoadImage(src);
 
     const onTouchStart = (clientX: number, clientY: number) => {
       emit('touchStart', clientX, clientY);
