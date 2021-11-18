@@ -57,6 +57,24 @@ app.use(vue3PhotoPreview);
 | intro | string | 图片介绍 | - | 否 |
 | download-name | string | 图片下载名称 | 图片名称 | 否 |
 
+### PhotoSlider
+#### 属性
+| 名称 | 类型 | 描述 | 默认值 | 必填 |
+| :-----| :---- | :---- | :---- | :---- |
+| items | ItemType[] | 图片列表 | - | 是 |
+| index | number | 图片当前索引 | - | 是 |
+| visible | number | 是否显示模态框 | - | 是 |
+| should-transition | boolean | 箭头切换是否需要过渡 | true | 否 |
+| toggleOverlay | boolean | 是否切换显隐覆盖物 | true | 否 |
+| default-backdrop-opacity | number | 默认背景透明度 | 1 | 否 |
+#### 事件
+| 名称 | 描述 | 参数 |
+| :-----| :---- | :---- |
+| clickPhoto | 点击预览图片的回调 | - |
+| clickMask | 点击预览背景的回调 | - |
+| changeIndex | 图片下标改变的回调 | newIndex |
+| closeModal | 关闭预览的回调 | - |
+
 ## 本地开发调试
 
 1. 在根目录依次执行
