@@ -5,7 +5,7 @@
     :visible="visible"
     :index="index"
     :should-transition="shouldTransition"
-    :photo-closable="photoClosable"
+    :toggle-overlay="!photoClosable"
     :default-backdrop-opacity="defaultBackdropOpacity"
     :items="items"
     @clickPhoto="handleClickPhoto"

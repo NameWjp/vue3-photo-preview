@@ -147,7 +147,7 @@ export default defineComponent({
       required: true,
     },
     /**
-     * 是否显示
+     * 是否显示模态框
      */
     visible: {
       type: Boolean,
@@ -161,11 +161,11 @@ export default defineComponent({
       default: true,
     },
     /**
-     * 图片点击是否关闭
+     * 是否切换显隐覆盖物
      */
-    photoClosable: {
+    toggleOverlay: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     /**
      * 默认背景透明度
@@ -267,8 +267,7 @@ export default defineComponent({
       }
     },
     handleSingleTap() {
-      // 图片点击不关闭时切换覆盖物显示
-      if (!this.photoClosable) {
+      if (this.toggleOverlay) {
         this.overlayVisible = !this.overlayVisible;
       }
     },
