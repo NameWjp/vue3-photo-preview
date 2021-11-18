@@ -1,8 +1,9 @@
 import { Meta, Story, Canvas, ArgsTable } from '@storybook/addon-docs';
-import { PhotoProvider, PhotoConsumer } from 'vue3-photo-preview';
+import { PhotoProvider, PhotoConsumer, PhotoSlider } from 'vue3-photo-preview';
 import { ViewBox, imgList } from '../main.ts';
 import originPhotoProvider from 'vue3-photo-preview/src/PhotoProvider/index.vue';
 import originPhotoConsumer from 'vue3-photo-preview/src/PhotoConsumer/index.vue'
+import originPhotoSlider from 'vue3-photo-preview/src/PhotoSlider/index.vue';
 import 'vue3-photo-preview/dist/index.css';
 
 <Meta title="vue3-photo-preview" />
@@ -21,7 +22,7 @@ import 'vue3-photo-preview/dist/index.css';
         template: `
           <photo-provider>
             <photo-consumer v-for="src in imgList" :intro="src" :key="src" :src="src">
-              <ViewBox :src="src" />
+              <view-box :src="src" />
             </photo-consumer>
           </photo-provider>
         `
@@ -89,6 +90,64 @@ import 'vue3-photo-preview/dist/index.css';
   </Story>
 </Canvas>
 
+## 受控延迟预览
+<Canvas>
+  <Story name="受控延迟预览">
+    {
+      () => ({
+        data() {
+          return {
+            imgList,
+            index: 0,
+            visible: false,
+            items: imgList.map(src => ({ src, key: src, intro: src })),
+          }
+        },
+        methods: {
+          changeIndex(index) {
+            this.index = index;
+          },
+          delay(time) {
+            return new Promise((resolve, reject) => {
+              setTimeout(() => {
+                resolve();
+              }, time * 1000)
+            })
+          },
+          async handleShow(key) {
+            await this.delay(3);
+            const itemIndex = this.items.findIndex(item => item.key === key);
+            if (itemIndex > -1) {
+              this.index = itemIndex;
+              this.visible = true;
+            }
+          },
+          handleHide() {
+            this.visible = false;
+          }
+        },
+        components: { PhotoSlider, ViewBox },
+        template: `
+          <view-box
+            v-for="src in imgList"
+            :key="src"
+            :src="src"
+            @click="handleShow(src)"
+          />
+          <photo-slider
+            :items="items"
+            :visible="visible"
+            :index="index"
+            @changeIndex="changeIndex"
+            @clickMask="handleHide"
+            @closeModal="handleHide"
+          />
+        `
+      })
+    }
+  </Story>
+</Canvas>
+
 ## Props
 
 ### PhotoProvider
@@ -98,3 +157,6 @@ import 'vue3-photo-preview/dist/index.css';
 ### PhotoConsumer
 
 <ArgsTable of={originPhotoConsumer} />
+
+### PhotoSlider
+<ArgsTable of={originPhotoSlider} />
