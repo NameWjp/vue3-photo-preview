@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    // 使用 es2019 解决 optional chaining 写法报错
+    // https://github.com/storybookjs/storybook/issues/15724
+    "target": "es2019",
     "module": "esnext",
     "strict": true,
     "jsx": "preserve",
