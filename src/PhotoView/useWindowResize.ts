@@ -13,6 +13,6 @@ export default function useWindowResize(
   window.addEventListener('resize', handleResize);
 
   onBeforeUnmount(() => {
-    window.addEventListener('resize', handleResize);
+    window.removeEventListener('resize', handleResize);
   });
 }
