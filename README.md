@@ -65,7 +65,7 @@ app.use(vue3PhotoPreview);
 | index | number | 图片当前索引 | - | 是 |
 | visible | number | 是否显示模态框 | - | 是 |
 | should-transition | boolean | 箭头切换是否需要过渡 | true | 否 |
-| toggleOverlay | boolean | 是否切换显隐覆盖物 | true | 否 |
+| toggle-overlay | boolean | 是否切换显隐覆盖物 | true | 否 |
 | default-backdrop-opacity | number | 默认背景透明度 | 1 | 否 |
 #### 事件
 | 名称 | 描述 | 参数 |
