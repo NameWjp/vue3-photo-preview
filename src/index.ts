@@ -15,6 +15,8 @@ const install = (app: App): void  => {
   });
 };
 
+export * from './types';
+
 export { PhotoProvider, PhotoConsumer, PhotoSlider };
 
 export default { install };
