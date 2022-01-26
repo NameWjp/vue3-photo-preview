@@ -158,7 +158,7 @@ export default defineComponent({
      */
     shouldTransition: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     /**
      * 是否切换显隐覆盖物
@@ -391,11 +391,11 @@ export default defineComponent({
         this.$emit('changeIndex', this.index + 1);
       }
     },
-    handleClickPhoto() {
-      this.$emit('clickPhoto');
+    handleClickPhoto(e: MouseEvent) {
+      this.$emit('clickPhoto', e);
     },
-    handleClickMask() {
-      this.$emit('clickMask');
+    handleClickMask(e: MouseEvent) {
+      this.$emit('clickMask', e);
     },
     handleClickClose() {
       this.$emit('closeModal');
