@@ -51,19 +51,19 @@
         </div>
       </div>
       <div
-        v-for="item in items"
+        v-for="(item, currentIndex) in showItems"
         :key="item.key"
         class="PhotoSlider__PhotoBox"
         :style="{
-          left: `${(innerWidth + horizontalOffset) * getItemIndex(item)}px`,
-          transition: getTransition(),
-          transform: `translate3d(${-(innerWidth + horizontalOffset) * index + touchMoveX}px, 0px, 0px)`
+          left: getItemLeft(currentIndex),
+          transition: getItemTransition(),
+          transform: getItemTransform()
         }"
         @transitionend="resetNeedTransition"
         @click="handleClickMask"
       >
         <photo-view
-          :ref="setPhotoViewRef"
+          :ref="(val) => setPhotoViewRef(item.key, val)"
           :origin-rect="originRect"
           :show-animate-type="showAnimateType"
           :src="item.src"
@@ -76,14 +76,14 @@
       </div>
       <template v-if="!isTouchDevice">
         <div
-          v-if="index > 0"
+          v-if="loop || index > 0"
           class="PhotoSlider__ArrowLeft"
           @click="handlePrevious"
         >
           <arrow-left />
         </div>
         <div
-          v-if="index < items.length - 1"
+          v-if="loop || index < items.length - 1"
           class="PhotoSlider__ArrowRight"
           @click="handleNext"
         >
@@ -173,6 +173,13 @@ export default defineComponent({
     defaultBackdropOpacity: {
       type: Number,
       default: 1,
+    },
+    /**
+     * 是否循环显示预览图
+     */
+    loop: {
+      type: Boolean,
+      default: false,
     }
   },
   emits: ['clickPhoto', 'clickMask', 'changeIndex', 'closeModal'],
@@ -213,9 +220,22 @@ export default defineComponent({
       backdropOpacity: this.defaultBackdropOpacity,
       // 是否显示覆盖物
       overlayVisible: true,
+      // 虚拟下标，用于循环预览
+      virtualIndex: 0,
       // photo-view 子组件
-      photoViewRefs: [] as InstanceType<typeof PhotoView>[],
+      photoViewRefs: {} as { [key: string]: InstanceType<typeof PhotoView> },
     };
+  },
+  computed: {
+    // 当前显示的图片列表
+    showItems() {
+      const len = this.items.length;
+      if (this.loop) {
+        const connect = this.items.concat(this.items).concat(this.items);
+        return connect.slice(len + this.index - 1, len + this.index + 2);
+      }
+      return this.items.slice(Math.max(this.index - 1, 0), Math.min(this.index + 2, len));
+    }
   },
   created() {
     window.addEventListener('keydown', this.handleKeyDown);
@@ -224,7 +244,7 @@ export default defineComponent({
     window.removeEventListener('keydown', this.handleKeyDown);
   },
   beforeUpdate() {
-    this.photoViewRefs = [];
+    this.photoViewRefs = {};
   },
   methods: {
     handleDownload() {
@@ -237,19 +257,19 @@ export default defineComponent({
       a.dispatchEvent(new MouseEvent('click'));
     },
     toggleFlipHorizontal() {
-      this.photoViewRefs[this.index].toggleFlipHorizontal();
+      this.photoViewRefs[this.currentItem.key].toggleFlipHorizontal();
     },
     toggleFlipVertical() {
-      this.photoViewRefs[this.index].toggleFlipVertical();
+      this.photoViewRefs[this.currentItem.key].toggleFlipVertical();
     },
     handleRotateLeft() {
-      this.photoViewRefs[this.index].handleRotateLeft();
+      this.photoViewRefs[this.currentItem.key].handleRotateLeft();
     },
     handleRotateRight() {
-      this.photoViewRefs[this.index].handleRotateRight();
+      this.photoViewRefs[this.currentItem.key].handleRotateRight();
     },
-    setPhotoViewRef(ref: InstanceType<typeof PhotoView>) {
-      this.photoViewRefs.push(ref);
+    setPhotoViewRef(key: string, ref: InstanceType<typeof PhotoView>) {
+      this.photoViewRefs[key] = ref;
     },
     handleKeyDown(e: KeyboardEvent) {
       if (this.visible) {
@@ -300,10 +320,10 @@ export default defineComponent({
     handleTouchHorizontalMove(clientX: number) {
       let touchMoveX = clientX - this.clientX;
 
-      // 第一张和最后一张超出时拖拽距离减半
+      // 非循环模式下，第一张和最后一张超出时拖拽距离减半
       if (
-        (this.index === 0 && touchMoveX > 0) ||
-        (this.index === this.items.length - 1 && touchMoveX < 0)
+        !this.loop &&
+        ((this.index === 0 && touchMoveX > 0) || (this.index === this.items.length - 1 && touchMoveX < 0))
       ) {
         touchMoveX = touchMoveX / 2;
       }
@@ -378,18 +398,17 @@ export default defineComponent({
     resetNeedTransition() {
       this.needTransition = false;
     },
-    getItemIndex(item: ItemType) {
-      return this.items.findIndex(({ key }) => key === item.key);
-    },
     handlePrevious() {
-      if (this.index > 0) {
-        this.$emit('changeIndex', this.index - 1);
-      }
+      const len = this.items.length;
+      if (!this.loop && this.index === 0) return;
+      this.$emit('changeIndex', (this.index + len - 1) % len);
+      this.virtualIndex -= 1;
     },
     handleNext() {
-      if (this.index < this.items.length - 1) {
-        this.$emit('changeIndex', this.index + 1);
-      }
+      const len = this.items.length;
+      if (!this.loop && this.index === len - 1) return;
+      this.$emit('changeIndex', (this.index + 1) % len);
+      this.virtualIndex += 1;
     },
     handleClickPhoto(e: MouseEvent) {
       this.$emit('clickPhoto', e);
@@ -400,7 +419,16 @@ export default defineComponent({
     handleClickClose() {
       this.$emit('closeModal');
     },
-    getTransition() {
+    // 当预览下一张时，currentIndex 会从 1 变成 0，相当于左移一个单位，所以此时只需要右移一个单位的来平衡 transform 的左移即可
+    getItemLeft(currentIndex: number) {
+      let index = this.virtualIndex + currentIndex;
+      // 非循环模式的第一张图片不需要左移，因为只有两张图片，左侧没有图片
+      if (this.loop || this.index !== 0) {
+        index -= 1;
+      }
+      return `${(this.innerWidth + this.horizontalOffset) * index}px`;
+    },
+    getItemTransition() {
       const transition = 'transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1)';
       if (this.needTransition) {
         return transition;
@@ -409,6 +437,9 @@ export default defineComponent({
         return undefined;
       }
       return this.shouldTransition ? transition : undefined;
+    },
+    getItemTransform() {
+      return `translate3d(${-(this.innerWidth + this.horizontalOffset) * this.virtualIndex + this.touchMoveX}px, 0px, 0px)`;
     }
   }
 });

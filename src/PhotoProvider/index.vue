@@ -8,6 +8,7 @@
     :toggle-overlay="!photoClosable"
     :default-backdrop-opacity="defaultBackdropOpacity"
     :items="items"
+    :loop="loop"
     @clickPhoto="handleClickPhoto"
     @clickMask="handleClickMask"
     @changeIndex="updateIndex"
@@ -56,6 +57,13 @@ export default defineComponent({
     defaultBackdropOpacity: {
       type: Number,
       default: 1,
+    },
+    /**
+     * 是否循环显示预览图
+     */
+    loop: {
+      type: Boolean,
+      default: false,
     }
   },
   emits: ['indexChange', 'visibleChange'],

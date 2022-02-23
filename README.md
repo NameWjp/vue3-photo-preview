@@ -43,6 +43,7 @@ app.use(vue3PhotoPreview);
 | mask-closable | boolean | 背景点击是否关闭 | true | 否 |
 | should-transition | boolean | 箭头切换是否需要过渡 | false | 否 |
 | default-backdrop-opacity | number | 默认背景透明度 | 1 | 否 |
+| loop | boolean | 是否循环显示预览图 | false | 否 |
 #### 事件
 | 名称 | 描述 | 参数 |
 | :-----| :---- | :---- |
@@ -67,6 +68,7 @@ app.use(vue3PhotoPreview);
 | should-transition | boolean | 箭头切换是否需要过渡 | false | 否 |
 | toggle-overlay | boolean | 是否切换显隐覆盖物 | true | 否 |
 | default-backdrop-opacity | number | 默认背景透明度 | 1 | 否 |
+| loop | boolean | 是否循环显示预览图 | false | 否 |
 #### 事件
 | 名称 | 描述 | 参数 |
 | :-----| :---- | :---- |
