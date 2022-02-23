@@ -1,6 +1,6 @@
 {
   "name": "vue3-photo-preview",
-  "version": "0.1.7",
+  "version": "0.2.0",
   "description": "一个 vue3 的图片预览组件",
   "main": "dist/vue3-photo-preview.umd.js",
   "module": "dist/vue3-photo-preview.esm.js",
