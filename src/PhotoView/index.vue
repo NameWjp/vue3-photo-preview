@@ -133,10 +133,10 @@ export default defineComponent({
       this.isFlipVertical = !this.isFlipVertical;
     },
     getTransform() {
+      const scaleX = `${this.isFlipHorizontal ? '-' : ''}${this.scale}`;
+      const scaleY = `${this.isFlipVertical ? '-' : ''}${this.scale}`;
       const transform: Record<string, string> = {
-        translate3d: `${this.x}px, ${this.y}px, 0`,
-        scaleX: `${this.isFlipHorizontal ? '-' : ''}${this.scale}`,
-        scaleY: `${this.isFlipVertical ? '-' : ''}${this.scale}`
+        matrix: `${scaleX}, 0, 0, ${scaleY}, ${this.x}, ${this.y}`,
       };
       if (this.rotate) {
         transform.rotate = `${this.rotate}deg`;
@@ -199,6 +199,7 @@ export default defineComponent({
     }
 
     .PhotoView__Photo {
+      touch-action: none;
       cursor: grab;
 
       &:active {
