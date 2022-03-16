@@ -114,6 +114,37 @@ import 'vue3-photo-preview/dist/index.css';
   </Story>
 </Canvas>
 
+## 异步更新图片列表
+<Canvas>
+  <Story name="异步更新图片列表">
+    {
+      () => ({
+        data() {
+          return {
+            list1: imgList.slice(0, 2),
+            list2: imgList.slice(2, imgList.length),
+            list: imgList.slice(0, 2),
+          }
+        },
+        methods: {
+          changeImgList() {
+            this.list = this.list2;
+          }
+        },
+        components: { PhotoProvider, PhotoConsumer, ViewBox },
+        template: `
+          <photo-provider>
+            <photo-consumer v-for="src in list" :intro="src" :key="src" :src="src">
+              <view-box :src="src" />
+            </photo-consumer>
+            <button @click="changeImgList" style="vertical-align:top;">改变图片列表</button>
+          </photo-provider>
+        `
+      })
+    }
+  </Story>
+</Canvas>
+
 ## 受控延迟预览
 <Canvas>
   <Story name="受控延迟预览">

@@ -12,8 +12,8 @@
 </template>
 
 <script lang='ts'>
-import { defineComponent, inject, onMounted, ref, watch, toRefs } from 'vue';
-import { updateItemKey, handleShowKey } from '../symbols';
+import { defineComponent, inject, onMounted, onUnmounted, ref, watch, toRefs } from 'vue';
+import { updateItemKey, removeItemKey, handleShowKey } from '../symbols';
 import uniqueId from 'lodash-es/uniqueId';
 
 export default defineComponent({
@@ -43,6 +43,7 @@ export default defineComponent({
   },
   setup(props) {
     const updateItem = inject(updateItemKey);
+    const removeItem = inject(removeItemKey);
     const handleShow = inject(handleShowKey);
     const root = ref<HTMLElement | null>(null);
     const key = uniqueId();
@@ -65,6 +66,9 @@ export default defineComponent({
 
     onMounted(() => {
       updateItem?.(getItem());
+    });
+    onUnmounted(() => {
+      removeItem?.(key);
     });
 
     return {

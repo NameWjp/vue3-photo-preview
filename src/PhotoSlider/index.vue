@@ -249,24 +249,26 @@ export default defineComponent({
   methods: {
     handleDownload() {
       const item = this.items[this.index];
-      const a = document.createElement('a');
-      const paths = item.src.split('.')[0].split('/');
-      const name = paths[paths.length - 1];
-      a.download = item.downloadName || name;
-      a.href = item.src;
-      a.dispatchEvent(new MouseEvent('click'));
+      if (item) {
+        const a = document.createElement('a');
+        const paths = item.src.split('.')[0].split('/');
+        const name = paths[paths.length - 1];
+        a.download = item.downloadName || name;
+        a.href = item.src;
+        a.dispatchEvent(new MouseEvent('click'));
+      }
     },
     toggleFlipHorizontal() {
-      this.photoViewRefs[this.currentItem.key].toggleFlipHorizontal();
+      this.photoViewRefs[this.currentItem.key]?.toggleFlipHorizontal();
     },
     toggleFlipVertical() {
-      this.photoViewRefs[this.currentItem.key].toggleFlipVertical();
+      this.photoViewRefs[this.currentItem.key]?.toggleFlipVertical();
     },
     handleRotateLeft() {
-      this.photoViewRefs[this.currentItem.key].handleRotateLeft();
+      this.photoViewRefs[this.currentItem.key]?.handleRotateLeft();
     },
     handleRotateRight() {
-      this.photoViewRefs[this.currentItem.key].handleRotateRight();
+      this.photoViewRefs[this.currentItem.key]?.handleRotateRight();
     },
     setPhotoViewRef(key: string, ref: InstanceType<typeof PhotoView>) {
       this.photoViewRefs[key] = ref;

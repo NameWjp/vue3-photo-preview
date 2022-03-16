@@ -24,7 +24,7 @@ export default function useItems(index: Ref<number>): useItemsReturn {
     const nextEndIndex = nextItems.length - 1;
 
     items.value = nextItems;
-    index.value = Math.min(index.value, nextEndIndex);
+    index.value = Math.max(Math.min(index.value, nextEndIndex), 0);
   };
 
   return {
