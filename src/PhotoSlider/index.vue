@@ -67,7 +67,7 @@
           :origin-rect="originRect"
           :show-animate-type="showAnimateType"
           :src="item.src"
-          @click.stop="handleClickPhoto"
+          @click.stop
           @touchStart="handleTouchStart"
           @touchMove="handleTouchMove"
           @touchEnd="handleTouchEnd"
@@ -288,10 +288,11 @@ export default defineComponent({
         }
       }
     },
-    handleSingleTap() {
+    handleSingleTap(_clientX: number, _clientY: number, e: MouseEvent | TouchEvent) {
       if (this.toggleOverlay) {
         this.overlayVisible = !this.overlayVisible;
       }
+      this.$emit('clickPhoto', e);
     },
     handleTouchStart(clientX: number, clientY: number) {
       this.touched = true;
@@ -412,10 +413,7 @@ export default defineComponent({
       this.$emit('changeIndex', (this.index + 1) % len);
       this.virtualIndex += 1;
     },
-    handleClickPhoto(e: MouseEvent) {
-      this.$emit('clickPhoto', e);
-    },
-    handleClickMask(e: MouseEvent) {
+    handleClickMask(e: MouseEvent | TouchEvent) {
       this.$emit('clickMask', e);
     },
     handleClickClose() {

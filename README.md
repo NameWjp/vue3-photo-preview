@@ -72,8 +72,8 @@ app.use(vue3PhotoPreview);
 #### 事件
 | 名称 | 描述 | 参数 |
 | :-----| :---- | :---- |
-| clickPhoto | 点击预览图片的回调 | MouseEvent |
-| clickMask | 点击预览背景的回调 | MouseEvent |
+| clickPhoto | 点击预览图片的回调 | MouseEvent&#124;TouchEvent |
+| clickMask | 点击预览背景的回调 | MouseEvent&#124;TouchEvent |
 | changeIndex | 图片下标改变的回调 | newIndex |
 | closeModal | 关闭预览的回调 | - |
 

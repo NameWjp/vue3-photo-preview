@@ -86,8 +86,8 @@ export default defineComponent({
     const onTouchEnd = (touchType: TouchTypeEnum, clientX: number, clientY: number, edgeTypes: EdgeTypeEnum[]) => {
       emit('touchEnd', touchType, clientX, clientY, edgeTypes);
     };
-    const onSingleTap = (clientX: number, clientY: number) => {
-      emit('singleTap', clientX, clientY);
+    const onSingleTap = (clientX: number, clientY: number, e: MouseEvent | TouchEvent) => {
+      emit('singleTap', clientX, clientY, e);
     };
 
     const {

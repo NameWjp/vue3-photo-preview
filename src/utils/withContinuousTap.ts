@@ -1,15 +1,15 @@
 import debounce from 'lodash-es/debounce';
 
-export type TapFuncType<T> = (...args: T[]) => void;
+export type TapFuncType = (clientX: number, clientY: number, e: TouchEvent | MouseEvent) => void;
 
-export default function withContinuousTap<T>(
-  singleTap: TapFuncType<T>,
-  doubleTap: TapFuncType<T>
-): TapFuncType<T> {
+export default function withContinuousTap(
+  singleTap: TapFuncType,
+  doubleTap: TapFuncType
+): TapFuncType {
   // 当前连续点击次数
   let continuousCount = 0;
 
-  const withSingleTap = debounce((...args) => {
+  const withSingleTap = debounce((...args: [number, number, TouchEvent | MouseEvent]) => {
     continuousCount = 0;
     singleTap(...args);
   }, 300);

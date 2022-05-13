@@ -30,7 +30,7 @@ export default function useMoveImage(
   onTouchStart: (clientX: number, clientY: number) => void,
   onTouchMove: (touchType: TouchTypeEnum, clientX: number, clientY: number, edgeTypes: EdgeTypeEnum[]) => void,
   onTouchEnd: (touchType: TouchTypeEnum, clientX: number, clientY: number, edgeTypes: EdgeTypeEnum[]) => void,
-  onSingleTap: (clientX: number, clientY: number) => void,
+  onSingleTap: (clientX: number, clientY: number, e: MouseEvent | TouchEvent) => void,
 ): useMoveImageReturn {
   // 图片 x 偏移量
   const x = ref(0);
@@ -152,7 +152,7 @@ export default function useMoveImage(
   const handleMouseUp = (e: MouseEvent) => {
     if (isTouchDevice) return;
 
-    handleUp(e.clientX, e.clientY);
+    handleUp(e.clientX, e.clientY, e);
 
     window.removeEventListener('mousemove', handleMouseMove);
     window.removeEventListener('mouseup', handleMouseUp);
@@ -162,7 +162,7 @@ export default function useMoveImage(
     if (!isTouchDevice) return;
 
     const touch = e.changedTouches[0];
-    handleUp(touch.clientX, touch.clientY);
+    handleUp(touch.clientX, touch.clientY, e);
 
     window.removeEventListener('touchmove', handleTouchMove);
     window.removeEventListener('touchend', handleTouchEnd);
@@ -192,11 +192,11 @@ export default function useMoveImage(
     }
   };
 
-  const onTap = withContinuousTap<number>(onSingleTap, onDoubleTap);
+  const onTap = withContinuousTap(onSingleTap, onDoubleTap);
 
-  const handleUp = (newClientX: number, newClientY: number) => {
+  const handleUp = (newClientX: number, newClientY: number, e: TouchEvent | MouseEvent) => {
     if (clientX.value === newClientX && clientY.value === newClientY) {
-      onTap(newClientX, newClientY);
+      onTap(newClientX, newClientY, e);
     }
 
     onTouchEnd(touchType.value, newClientX, newClientY, edgeTypes);
