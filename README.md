@@ -38,7 +38,7 @@ app.use(vue3PhotoPreview);
 ### PhotoProvider
 #### 属性
 | 名称 | 类型 | 描述 | 默认值 | 必填 |
-| :-----| :---- | :---- | :---- | :---- |
+| :---- | :---- | :---- | :---- | :---- |
 | photo-closable | boolean | 图片点击是否关闭 | false | 否 |
 | mask-closable | boolean | 背景点击是否关闭 | true | 否 |
 | should-transition | boolean | 箭头切换是否需要过渡 | false | 否 |
@@ -46,14 +46,14 @@ app.use(vue3PhotoPreview);
 | loop | boolean | 是否循环显示预览图 | false | 否 |
 #### 事件
 | 名称 | 描述 | 参数 |
-| :-----| :---- | :---- |
+| :---- | :---- | :---- |
 | indexChange | 图片切换回调 | { index, items, visible } |
 | visibleChange | 图片显隐切换回调 | { index, items, visible } |
 
 ### PhotoConsumer
 #### 属性
 | 名称 | 类型 | 描述 | 默认值 | 必填 |
-| :-----| :---- | :---- | :---- | :---- |
+| :---- | :---- | :---- | :---- | :---- |
 | src | string | 图片地址 | - | 是 |
 | intro | string | 图片介绍 | - | 否 |
 | download-name | string | 图片下载名称 | 图片名称 | 否 |
@@ -61,7 +61,7 @@ app.use(vue3PhotoPreview);
 ### PhotoSlider
 #### 属性
 | 名称 | 类型 | 描述 | 默认值 | 必填 |
-| :-----| :---- | :---- | :---- | :---- |
+| :---- | :---- | :---- | :---- | :---- |
 | items | ItemType[] | 图片列表 | - | 是 |
 | index | number | 图片当前索引 | - | 是 |
 | visible | number | 是否显示模态框 | - | 是 |
@@ -71,7 +71,7 @@ app.use(vue3PhotoPreview);
 | loop | boolean | 是否循环显示预览图 | false | 否 |
 #### 事件
 | 名称 | 描述 | 参数 |
-| :-----| :---- | :---- |
+| :---- | :---- | :---- |
 | clickPhoto | 点击预览图片的回调 | MouseEvent&#124;TouchEvent |
 | clickMask | 点击预览背景的回调 | MouseEvent&#124;TouchEvent |
 | changeIndex | 图片下标改变的回调 | newIndex |
