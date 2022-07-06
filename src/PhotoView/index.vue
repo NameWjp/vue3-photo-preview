@@ -14,15 +14,16 @@
         'PhotoView__animateOut': showAnimateType === ShowAnimateEnum.Out,
       }"
       :style="{
-        transformOrigin: getAnimateOrigin(originRect)
+        transformOrigin: getAnimateOrigin(originRect),
+        width: showAnimateType === ShowAnimateEnum.In || showAnimateType === ShowAnimateEnum.Out ? '0' : '100%'
       }"
     >
       <img
         class="PhotoView__Photo"
-        :width="width"
-        :height="height"
         :src="src"
         :style="{
+          width: `${width}px`,
+          height: `${height}px`,
           transform: getTransform(),
           transition: touched ? undefined : 'transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1)',
         }"
@@ -201,6 +202,7 @@ export default defineComponent({
     .PhotoView__Photo {
       touch-action: none;
       cursor: grab;
+      display: block;
 
       &:active {
         cursor: grabbing;
