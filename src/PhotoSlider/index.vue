@@ -250,12 +250,30 @@ export default defineComponent({
     handleDownload() {
       const item = this.items[this.index];
       if (item) {
-        const a = document.createElement('a');
-        const paths = item.src.split('.')[0].split('/');
+        const paths = item.src.split('/');
         const name = paths[paths.length - 1];
-        a.download = item.downloadName || name;
-        a.href = item.src;
-        a.dispatchEvent(new MouseEvent('click'));
+
+        const img = new Image();
+        img.setAttribute('crossOrigin', 'Anonymous');
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const context = canvas.getContext('2d');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          context?.drawImage(img, 0, 0, img.width, img.height);
+          canvas.toBlob(blob => {
+            if (blob) {
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.download = item.downloadName || name;
+              a.href = url;
+              a.dispatchEvent(new MouseEvent('click'));
+              // 释放 createObjectURL 创建的内存对象（否则以 blob:http 开头的 url 可以到浏览器访问，多次创建内存会不断增大）
+              URL.revokeObjectURL(url);
+            }
+          });
+        };
+        img.src = item.src + '?v=' + Date.now();
       }
     },
     toggleFlipHorizontal() {
