@@ -40,7 +40,7 @@
             class="PhotoSlider__BannerIcon"
             @click="toggleFlipHorizontal"
           />
-          <filp-vertical
+          <flip-vertical
             class="PhotoSlider__BannerIcon"
             @click="toggleFlipVertical"
           />
@@ -112,7 +112,7 @@ import ArrowRight from './ArrowRight.vue';
 import RotateLeft from './RotateLeft.vue';
 import RotateRight from './RotateRight.vue';
 import FlipHorizontal from './FlipHorizontal.vue';
-import FilpVertical from './FilpVertical.vue';
+import FlipVertical from './FlipVertical.vue';
 import Download from './Download.vue';
 import useAnimationHandle from './useAnimationHandle';
 import { ItemType, ShowAnimateEnum, TouchTypeEnum, EdgeTypeEnum } from '../types';
@@ -128,7 +128,7 @@ export default defineComponent({
     RotateLeft,
     RotateRight,
     FlipHorizontal,
-    FilpVertical,
+    FlipVertical,
     Download,
   },
   props: {
