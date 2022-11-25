@@ -15,6 +15,6 @@ git init
 git add -A
 git commit -m 'deploy'
 
-git push -f git@github.com:NameWjp/vue3-photo-preview.git main:gh-pages
+git push -f git@github.com:NameWjp/vue3-photo-preview.git master:gh-pages
 
 cd -
