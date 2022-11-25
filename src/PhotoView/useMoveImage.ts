@@ -28,8 +28,8 @@ export default function useMoveImage(
   naturalHeight: Ref<number>,
   setSuitableImageSize: (actualWidth: number, actualHeight: number, rotate: number) => void,
   onTouchStart: (clientX: number, clientY: number) => void,
-  onTouchMove: (touchType: TouchTypeEnum, clientX: number, clientY: number, edgeTypes: EdgeTypeEnum[]) => void,
-  onTouchEnd: (touchType: TouchTypeEnum, clientX: number, clientY: number, edgeTypes: EdgeTypeEnum[]) => void,
+  onTouchMove: (touchType: TouchTypeEnum, clientX: number, clientY: number, lastScale: number, edgeTypes: EdgeTypeEnum[]) => void,
+  onTouchEnd: (touchType: TouchTypeEnum, clientX: number, clientY: number, lastScale: number, edgeTypes: EdgeTypeEnum[]) => void,
   onSingleTap: (clientX: number, clientY: number, e: MouseEvent | TouchEvent) => void,
 ): useMoveImageReturn {
   // 图片 x 偏移量
@@ -54,6 +54,8 @@ export default function useMoveImage(
   const lastY = ref(0);
   // 上一次 touch 的长度
   const lastTouchLength = ref(0);
+  // 上一次的图片缩放程度
+  const lastScale = ref(1);
   // 边缘状态(用于缩放图片判断)
   let edgeTypes: EdgeTypeEnum[] = [];
 
@@ -81,6 +83,7 @@ export default function useMoveImage(
     clientX.value = newClientX;
     clientY.value = newClientY;
     lastTouchLength.value = touchLength;
+    lastScale.value = scale.value;
     edgeTypes = getEdgeTypes({
       width: width.value,
       height: height.value,
@@ -122,7 +125,7 @@ export default function useMoveImage(
       }
     }
 
-    onTouchMove(touchType.value, newClientX, newClientY, edgeTypes);
+    onTouchMove(touchType.value, newClientX, newClientY, lastScale.value, edgeTypes);
 
     const newX = newClientX - clientX.value;
     const newY = newClientY - clientY.value;
@@ -199,7 +202,7 @@ export default function useMoveImage(
       onTap(newClientX, newClientY, e);
     }
 
-    onTouchEnd(touchType.value, newClientX, newClientY, edgeTypes);
+    onTouchEnd(touchType.value, newClientX, newClientY, lastScale.value, edgeTypes);
 
     if (touchType.value === TouchTypeEnum.Y) {
       x.value = 0;

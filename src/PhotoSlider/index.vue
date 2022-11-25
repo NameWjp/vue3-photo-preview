@@ -318,8 +318,8 @@ export default defineComponent({
       this.clientX = clientX;
       this.clientY = clientY;
     },
-    handleTouchMove(touchType: TouchTypeEnum, clientX: number, clientY: number, edgeTypes: EdgeTypeEnum[]) {
-      if (touchType === TouchTypeEnum.Scale) {
+    handleTouchMove(touchType: TouchTypeEnum, clientX: number, clientY: number, lastScale: number, edgeTypes: EdgeTypeEnum[]) {
+      if (touchType === TouchTypeEnum.Scale && lastScale !== 1) {
         this.handleTouchScaleMove(clientX, edgeTypes);
       }
       if (touchType === TouchTypeEnum.X) {
@@ -362,8 +362,8 @@ export default defineComponent({
       this.hasMove = clientX !== this.clientX || clientY !== this.clientY;
       this.backdropOpacity = opacity;
     },
-    handleTouchEnd(touchType: TouchTypeEnum, clientX: number, clientY: number, edgeTypes: EdgeTypeEnum[]) {
-      if (touchType === TouchTypeEnum.Scale) {
+    handleTouchEnd(touchType: TouchTypeEnum, clientX: number, clientY: number, lastScale: number, edgeTypes: EdgeTypeEnum[]) {
+      if (touchType === TouchTypeEnum.Scale && lastScale !== 1) {
         this.handleTouchScaleEnd(clientX, edgeTypes);
       }
       if (touchType === TouchTypeEnum.X) {

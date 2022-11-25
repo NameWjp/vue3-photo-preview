@@ -81,11 +81,11 @@ export default defineComponent({
     const onTouchStart = (clientX: number, clientY: number) => {
       emit('touchStart', clientX, clientY);
     };
-    const onTouchMove = (touchType: TouchTypeEnum, clientX: number, clientY: number, edgeTypes: EdgeTypeEnum[]) => {
-      emit('touchMove', touchType, clientX, clientY, edgeTypes);
+    const onTouchMove = (touchType: TouchTypeEnum, clientX: number, clientY: number, lastScale: number, edgeTypes: EdgeTypeEnum[]) => {
+      emit('touchMove', touchType, clientX, clientY, lastScale, edgeTypes);
     };
-    const onTouchEnd = (touchType: TouchTypeEnum, clientX: number, clientY: number, edgeTypes: EdgeTypeEnum[]) => {
-      emit('touchEnd', touchType, clientX, clientY, edgeTypes);
+    const onTouchEnd = (touchType: TouchTypeEnum, clientX: number, clientY: number, lastScale: number, edgeTypes: EdgeTypeEnum[]) => {
+      emit('touchEnd', touchType, clientX, clientY, lastScale, edgeTypes);
     };
     const onSingleTap = (clientX: number, clientY: number, e: MouseEvent | TouchEvent) => {
       emit('singleTap', clientX, clientY, e);
