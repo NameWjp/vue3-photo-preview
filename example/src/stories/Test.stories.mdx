@@ -31,6 +31,33 @@ import 'vue3-photo-preview/dist/index.css';
   </Story>
 </Canvas>
 
+## 自定义下载方法
+<Canvas>
+  <Story name="自定义下载方法">
+    {
+      () => ({
+        data() {
+          return {
+            imgList
+          }
+        },
+        methods: {
+          downloadMethod(item) {
+            console.log(item);
+          }
+        },
+        components: { PhotoProvider, PhotoConsumer, ViewBox },
+        template: `
+          <photo-provider :downloadMethod="downloadMethod">
+            <photo-consumer v-for="src in imgList" :intro="src" :key="src" :src="src">
+              <view-box :src="src" />
+            </photo-consumer>
+          </photo-provider>
+        `
+      })
+    }
+  </Story>
+</Canvas>
 
 ## 循环预览
 <Canvas>

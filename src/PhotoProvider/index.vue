@@ -9,6 +9,7 @@
     :default-backdrop-opacity="defaultBackdropOpacity"
     :items="items"
     :loop="loop"
+    :download-method="downloadMethod"
     @clickPhoto="handleClickPhoto"
     @clickMask="handleClickMask"
     @changeIndex="updateIndex"
@@ -17,12 +18,13 @@
 </template>
 
 <script lang='ts'>
-import { defineComponent, provide } from 'vue';
+import { defineComponent, PropType, provide } from 'vue';
 import { updateItemKey, removeItemKey, handleShowKey } from '../symbols';
 import useItems from './useItems';
 import useVisible from './useVisible';
 import useIndex from './useIndex';
 import PhotoSlider from '../PhotoSlider/index.vue';
+import { ItemType } from '../types';
 
 export default defineComponent({
   name: 'PhotoProvider',
@@ -64,6 +66,13 @@ export default defineComponent({
     loop: {
       type: Boolean,
       default: false,
+    },
+    /**
+     * 下载图片方法，不传使用内置的下载方法
+     */
+    downloadMethod: {
+      type: Function as PropType<(item: ItemType) => void | null>,
+      default: null,
     }
   },
   emits: ['indexChange', 'visibleChange'],

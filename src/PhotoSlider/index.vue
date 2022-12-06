@@ -180,6 +180,13 @@ export default defineComponent({
     loop: {
       type: Boolean,
       default: false,
+    },
+    /**
+     * 下载图片方法，不传使用内置的下载方法
+     */
+    downloadMethod: {
+      type: Function as PropType<(item: ItemType) => void | null>,
+      default: null,
     }
   },
   emits: ['clickPhoto', 'clickMask', 'changeIndex', 'closeModal'],
@@ -247,33 +254,38 @@ export default defineComponent({
     this.photoViewRefs = {};
   },
   methods: {
+    defaultDownloadMethod(item: ItemType) {
+      const paths = item.src.split('/');
+      const name = paths[paths.length - 1];
+
+      const img = new Image();
+      img.setAttribute('crossOrigin', 'Anonymous');
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        context?.drawImage(img, 0, 0, img.width, img.height);
+        canvas.toBlob(blob => {
+          if (blob) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.download = item.downloadName || name;
+            a.href = url;
+            a.dispatchEvent(new MouseEvent('click'));
+            // 释放 createObjectURL 创建的内存对象（否则以 blob:http 开头的 url 可以到浏览器访问，多次创建内存会不断增大）
+            URL.revokeObjectURL(url);
+          }
+        });
+      };
+      img.src = item.src + '?v=' + Date.now();
+    },
     handleDownload() {
       const item = this.items[this.index];
-      if (item) {
-        const paths = item.src.split('/');
-        const name = paths[paths.length - 1];
-
-        const img = new Image();
-        img.setAttribute('crossOrigin', 'Anonymous');
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const context = canvas.getContext('2d');
-          canvas.width = img.width;
-          canvas.height = img.height;
-          context?.drawImage(img, 0, 0, img.width, img.height);
-          canvas.toBlob(blob => {
-            if (blob) {
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement('a');
-              a.download = item.downloadName || name;
-              a.href = url;
-              a.dispatchEvent(new MouseEvent('click'));
-              // 释放 createObjectURL 创建的内存对象（否则以 blob:http 开头的 url 可以到浏览器访问，多次创建内存会不断增大）
-              URL.revokeObjectURL(url);
-            }
-          });
-        };
-        img.src = item.src + '?v=' + Date.now();
+      if (typeof this.downloadMethod === 'function') {
+        this.downloadMethod(item);
+      } else {
+        this.defaultDownloadMethod(item);
       }
     },
     toggleFlipHorizontal() {
