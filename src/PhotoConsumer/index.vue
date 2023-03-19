@@ -1,6 +1,6 @@
 <template>
   <span
-    v-if="$slots.default()"
+    v-if="$slots.default && $slots.default()"
     ref="root"
     style="display:inline-block;"
     class="PhotoConsumer"

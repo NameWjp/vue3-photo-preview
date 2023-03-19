@@ -14,7 +14,7 @@
         'PhotoView__animateOut': showAnimateType === ShowAnimateEnum.Out,
       }"
       :style="{
-        transformOrigin: getAnimateOrigin(originRect),
+        transformOrigin: getAnimateOrigin(originRect) || 'center',
         width: showAnimateType === ShowAnimateEnum.In || showAnimateType === ShowAnimateEnum.Out ? '0' : '100%'
       }"
     >

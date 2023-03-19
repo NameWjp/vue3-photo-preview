@@ -289,19 +289,20 @@ export default defineComponent({
       }
     },
     toggleFlipHorizontal() {
-      this.photoViewRefs[this.currentItem.key]?.toggleFlipHorizontal();
+      this.photoViewRefs[this.currentItem.key].toggleFlipHorizontal();
     },
     toggleFlipVertical() {
-      this.photoViewRefs[this.currentItem.key]?.toggleFlipVertical();
+      this.photoViewRefs[this.currentItem.key].toggleFlipVertical();
     },
     handleRotateLeft() {
-      this.photoViewRefs[this.currentItem.key]?.handleRotateLeft();
+      this.photoViewRefs[this.currentItem.key].handleRotateLeft();
     },
     handleRotateRight() {
-      this.photoViewRefs[this.currentItem.key]?.handleRotateRight();
+      this.photoViewRefs[this.currentItem.key].handleRotateRight();
     },
-    setPhotoViewRef(key: string, ref: InstanceType<typeof PhotoView>) {
-      this.photoViewRefs[key] = ref;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    setPhotoViewRef(key: string, ref: any) {
+      this.photoViewRefs[key] = ref as InstanceType<typeof PhotoView>;
     },
     handleKeyDown(e: KeyboardEvent) {
       if (this.visible) {
