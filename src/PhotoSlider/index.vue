@@ -450,7 +450,8 @@ export default defineComponent({
     handleClickClose() {
       this.$emit('closeModal');
     },
-    // 当预览下一张时，currentIndex 会从 1 变成 0，相当于左移一个单位，所以此时只需要右移一个单位的来平衡 transform 的左移即可
+    // 对于中间的图片，当预览下一张时，getItemTransform 方法会做动画左移一个单位。showItems 列表会发生变化使 currentIndex 会从 1 变成 0，也相当于左移一个单位
+    // 所以此时需要根据 virtualIndex 右移一个单位的来平衡其中一个左移即可
     getItemLeft(currentIndex: number) {
       let index = this.virtualIndex + currentIndex;
       // 非循环模式的第一张图片不需要左移，因为只有两张图片，左侧没有图片
